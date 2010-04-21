@@ -1,0 +1,74 @@
+<!ENTITY package.name "Xultris">
+<!ENTITY package.description "A tetris clone for mozilla">
+<!ENTITY package.version "3.0">
+
+<!ENTITY ui.score "Score">
+<!ENTITY ui.level "Level">
+<!ENTITY ui.nextpiece "Next Piece">
+<!ENTITY ui.newgame "New Game">
+<!ENTITY ui.pause "Pause">
+<!ENTITY ui.highscores "Top Scores">
+<!ENTITY ui.instructions "Instructions">
+<!ENTITY ui.killgame "Kill Game">
+<!ENTITY ui.1player "1 Player">
+<!ENTITY ui.2player "2 Player">
+<!ENTITY ui.scoring "Scoring">
+<!ENTITY ui.server "Server">
+<!ENTITY ui.client "Client">
+<!ENTITY ui.listening "Listening for incoming connections...">
+<!ENTITY ui.connecting "Connecting...">
+<!ENTITY ui.connected "-Connected-">
+<!ENTITY ui.enteripaddress "Please enter Player 2's address:">
+<!ENTITY ui.hitntobegin "Hit n to begin">
+<!ENTITY ui.cancel "Cancel">
+<!ENTITY ui.ok "Ok">
+<!ENTITY ui.close "Close">
+<!ENTITY ui.totalrows "Rows">
+<!ENTITY ui.1Poptions "1P Options">
+
+<!ENTITY key.newgame "n">
+<!ENTITY key.pause "p">
+<!ENTITY key.killgame "k">
+<!ENTITY key.options "o">
+<!ENTITY key.2player.client "c">
+<!ENTITY key.2player.server "s">
+
+<!ENTITY game.moveleft "Move Left">
+<!ENTITY game.moveright "Move Right">
+<!ENTITY game.rotateclockwise "Rotate Clockwise">
+<!ENTITY game.rotateanticlockwise "Rotate Anti-Clockwise">
+<!ENTITY game.drop "Drop">
+<!ENTITY game.initialscore "0">
+<!ENTITY game.initiallevel "1">
+<!ENTITY game.initialrows "0">
+
+<!ENTITY options.fallstyle "Fall Style">
+<!ENTITY options.leveloptions "Level Options">
+<!ENTITY options.startlevel "Start Level: ">
+<!ENTITY options.junk "Junk: ">
+<!ENTITY options.bgimage "Background Image">
+<!ENTITY options.gridborder "Grid Border">
+
+<!ENTITY desc.2player "You can play with another player over a LAN or the
+Internet. To play, complete 2 or more lines and they will be transferred to
+your opponent's screen. To play with another player, decide which one must act as a server
+and which one must act as a client.">
+<!ENTITY desc.instructions "The gameplay is the same as the classic Tetris. As
+the bricks fall, use the arrow keys to fit them together to make full horizontal
+lines. Full lines will then disappear.">
+<!ENTITY desc.scoring "1 point as the block falls. 10/25/50/100 points for clearing 1/2/3/4 lines together, respectively. Points double on second level, triple on third level, etc. Next level every 10 rows cleared.">
+
+<!ENTITY desc.fallstyle "Fall Style is whether the down arrow immediately drops
+the piece, or drops it one line.">
+<!ENTITY desc.bgimage "Turn the Xultris background image on or off">
+<!ENTITY desc.gridborder "Turn the grey border of the grid on or off">
+
+<!ENTITY player2.label "Player 2">
+
+<!ENTITY netplay.yourplayername.label "Your Player Name:">
+<!ENTITY netplay.connect.label "Connect!">
+<!ENTITY netplay.play.label "Play!">
+<!ENTITY netplay.cancel.label "Cancel">
+<!ENTITY netplay.connecting.label "Connecting...">
+<!ENTITY netplay.errorconnecting.label "Error Connecting">
+

@@ -1,0 +1,146 @@
+<?xml version="1.0"?> 
+
+<!--
+   - The contents of this file are subject to the Netscape Public
+   - License Version 1.1 (the "License"); you may not use this file
+   - except in compliance with the License. You may obtain a copy of
+   - the License at http://www.mozilla.org/NPL/
+   -  
+   - Software distributed under the License is distributed on an "AS
+   - IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+   - implied. See the License for the specific language governing
+   - rights and limitations under the License.
+   -  
+   - The Original Code is Mozilla Communicator client code, released
+   - March 31, 1998.
+   - 
+   - The Initial Developer of the Original Code is Netscape
+   - Communications Corporation. Portions created by Netscape are
+   - Copyright (C) 1999 Netscape Communications Corporation. All
+   - Rights Reserved.
+   - 
+   - Contributor(s):
+   -    Mike Schuette
+  -->
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+<!DOCTYPE window SYSTEM "chrome://xultris/locale/xultris.ent">
+
+<prefwindow id="xultris-preferences" 
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	title="&ui.1Poptions;"
+	orient="vertical"
+	align="center"
+	>
+
+	<!--<script language="javascript" src="xultris.js"/>-->
+
+    <prefpane id="pane1" label="&ui.1Poptions;">
+        <preferences>
+            <preference id="fall-style-slow" name="extensions.xultris.fall-style-slow" type="bool"/>
+            <preference id="grid-enabled" name="extensions.xultris.grid-enabled" type="bool"/>
+            <preference id="start-level" name="extensions.xultris.start-level" type="int"/>
+            <preference id="junk" name="extensions.xultris.junk" type="int"/>
+        </preferences>
+
+        <groupbox orient="vertical" id="tboxFallStyle"> 
+            <caption label="&options.fallstyle;"/>
+            <description>&desc.fallstyle;</description>
+            <hbox align="center">
+                <radiogroup id="radioFallStyle" orient="horizontal" preference="fall-style-slow">
+                    <radio group="radioFallStyle"
+                        id="radioFallFast"
+                        label="Immediate"
+                        value="false"/>
+                    <radio group="radioFallStyle"
+                        id="radioFallSlow"
+                        label="Slow"
+                        value="true"
+                        checked="true"/>
+            </radiogroup>
+            </hbox>
+        </groupbox>
+
+        <!--
+        <spring height="10px"/>
+
+        <groupbox orient="vertical" id="tboxBGImage"> 
+            <title><text value="&options.bgimage;"/></title>
+            <html width="200px" align="center">&desc.bgimage;</html>
+            <radiogroup id="radioBGImage" orient="horizontal" align="center" oncommand="updateBGImage();">
+                <radio group="radioBGImage"
+                    id="radioNoBGImage"
+                    label="Off"
+                    value="false"/>
+                <radio group="radioBGImage"
+                    id="radioYesBGImage"
+                    label="On"
+                    value="true"
+                    checked="true"/>
+            </radiogroup>
+        </groupbox>
+        -->
+
+
+        <spring height="10px"/>
+
+        <groupbox orient="vertical" id="tboxGridBorder"> 
+            <caption label="&options.gridborder;"/>
+            <description>&desc.gridborder;</description>
+            <radiogroup id="radioGridBorder" orient="horizontal" align="center" preference="grid-enabled">
+                <radio group="radioGridBorder"
+                    id="radioNoGridBorder"
+                    label="Off"
+                    value="false"/>
+                <radio group="radioGridBorder"
+                    id="radioYesGridBorder"
+                    label="On"
+                    value="true"
+                    checked="true"/>
+            </radiogroup>
+        </groupbox>
+
+        <spring height="10px"/>
+
+        <groupbox orient="vertical" width="200px">
+            <caption label="&options.leveloptions;"/>
+            <spring height="5px"/>
+            <vbox>
+                <hbox align="center">
+                    <text value="&options.startlevel;"/>
+
+                    <menulist id="startlevel" preference="start-level">
+                      <menupopup>
+                        <menuitem value="1" label="1 - Beginner"/>
+                        <menuitem value="2" label="2"/>
+                        <menuitem value="3" label="3"/>
+                        <menuitem value="4" label="4"/>
+                        <menuitem value="5" label="5"/>
+                        <menuitem value="6" label="6"/>
+                        <menuitem value="7" label="7"/>
+                        <menuitem value="8" label="8"/>
+                        <menuitem value="9" label="9 - Expert"/>
+                      </menupopup>
+                    </menulist>
+                </hbox>
+                <spring width="15px"/>
+                <hbox>
+                    <text value="&options.junk;"/>
+
+                    <menulist id="junk" preference="junk">
+                      <menupopup>
+                        <menuitem value="0" label="No Junk"/>
+                        <menuitem value="1" label="1 Line"/>
+                        <menuitem value="2" label="2 Lines"/>
+                        <menuitem value="3" label="3 Lines"/>
+                        <menuitem value="4" label="4 Lines"/>
+                      </menupopup>
+                    </menulist>
+                </hbox>
+            </vbox>
+        </groupbox>
+
+    </prefpane>
+
+</prefwindow>

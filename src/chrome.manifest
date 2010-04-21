@@ -1,0 +1,3 @@
+content	xultris	chrome/content/
+locale	xultris xultrisLocale chrome/locale/
+overlay chrome://browser/content/browser.xul chrome://xultris/content/xultris-overlay.xul

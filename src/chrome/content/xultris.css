@@ -1,0 +1,146 @@
+window {
+	background-color: black;
+	color: yellow;
+	font-family: verdana;
+}
+
+window.mobile {
+}
+
+grid {
+	border-style: solid;
+	border-width: 2px;
+	border-color: yellow;
+	max-height: 360px;
+}
+
+#rows row spring.greyborder,
+#rows2 row spring.greyborder {
+	width: 20px;
+	height: 20px;
+	border-style: solid;
+	border-width: 0px 0px 1px 1px;
+	border-color: gray;
+}
+
+#rows row spring.noborder,
+#rows2 row spring.noborder {
+	width: 20px;
+	height: 20px;
+}
+
+#prows row spring {
+	width: 15px;
+	height: 15px;
+}
+
+.dialog {
+	color: black;
+	width: 80px;
+}
+
+.desktop .dialog {
+	font-size: xx-small;
+}
+
+.on {
+	/*background-color: red;*/
+	width: 20px;
+	height: 20px;
+	border-style: outset;
+	border-width: 1px;
+	border-color: grey;
+}
+
+.off {
+	width: 20px;
+	height: 20px;
+	border-style: solid;
+	border-width: 0px 0px 1px 1px;
+	border-color: gray;
+	background-color: transparent;
+}
+
+.offnoborder {
+	width: 20px;
+	height: 20px;
+	background-color: transparent;
+}
+
+#maingrid,
+#player2{
+	background-position: bottom center;
+	background-repeat: no-repeat;
+	background-color: black;
+}
+
+.bgimage {
+	background-image: url("xultris.gif");
+}
+
+.nobgimage {
+ }
+
+#pgrid {
+	background-color: black;
+}
+
+#infotextbox {
+	padding-top: 100px;
+	height: 100%;
+	width: 100%;
+	display: block;
+	position: relative;
+	text-align: center;
+	color: white;
+	font-weight: 600;
+}
+
+.desktop #infotextbox {
+	font-size: 20px;
+}
+
+#superbox {
+	padding: 10px;
+}
+
+#righttext {
+	padding-left: 15px;
+	padding-right: 15px;
+	text-align: center;
+    color: yellow;
+}
+
+.title {
+	padding-bottom: 10px;
+	font-weight: bold;
+}
+
+.level , .score , .totalrows{
+}
+
+.connectedb {
+	padding-bottom: 10px;
+}
+
+.desktop .startlevel{
+	font-size: 12pt;
+}
+
+#connected {
+	color: red;
+}
+
+.desktop .nextpiece {
+	font-size: xx-small;
+}
+
+#connected {
+	display: none;
+}
+
+#buttoncontainer {
+    background-color: ButtonFace;
+    margin: 2em 3em;
+    -moz-border-radius: 1em/5em;
+}

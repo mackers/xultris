@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<overlay id="menuoverlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<script src="chrome://xultris/content/xultris-overlay.js"/>
+
+<!-- Firefox -->
+<menupopup id="menu_ToolsPopup">
+	<menuitem id="xultris-menuitem"
+		oncommand="toOpenWindowByType('xultris-main','chrome://xultris/content/');"
+		label="Xultris"
+		accesskey="x"
+		href="chrome://xultris/content/"
+		class="menuitem-iconic"/>
+</menupopup>
+
+</overlay>

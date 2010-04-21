@@ -1,0 +1,593 @@
+<?xml version="1.0"?> 
+
+<!--
+   - The contents of this file are subject to the Netscape Public
+   - License Version 1.1 (the "License"); you may not use this file
+   - except in compliance with the License. You may obtain a copy of
+   - the License at http://www.mozilla.org/NPL/
+   -  
+   - Software distributed under the License is distributed on an "AS
+   - IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+   - implied. See the License for the specific language governing
+   - rights and limitations under the License.
+   -  
+   - The Original Code is Mozilla Communicator client code, released
+   - March 31, 1998.
+   - 
+   - The Initial Developer of the Original Code is Netscape
+   - Communications Corporation. Portions created by Netscape are
+   - Copyright (C) 1999 Netscape Communications Corporation. All
+   - Rights Reserved.
+   - 
+   - Contributor(s):
+   -    David McNamara
+   -	David Gillen
+   -    Mike Schuette
+  -->
+
+<!--
+   - Xultris
+   - Version 3.0
+  -->
+
+<?xml-stylesheet href="chrome://browser/skin/platform.css" type="text/css"?>
+<?xml-stylesheet href="chrome://browser/skin/browser.css" type="text/css"?>
+<?xml-stylesheet href="chrome://browser/content/browser.css" type="text/css"?>
+<?xml-stylesheet href="xultris.css" type="text/css"?>
+
+
+<!DOCTYPE window SYSTEM "chrome://xultris/locale/xultris.ent">
+
+<window id="main-window" 
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	xmlns:html="http://www.w3.org/TR/REC-html40"
+	title="Xultris"
+	orient="vertical"
+	align="center"
+	onload="startup()"
+    class="mobile">
+
+	<script language="javascript" src="xultris.js"/>
+	<script language="javascript" src="xultris-netplay.js"/>
+
+	<keyset id="keyset">
+		<key id="moveleftkey" keycode="VK_LEFT" command="Game:moveleft"/>
+		<key id="moverightkey" keycode="VK_RIGHT" command="Game:moveright"/>
+		<key id="rotateclockwisekey" keycode="VK_UP" command="Game:rotateclockwise"/>
+		<key id="rotateanticlockwisekey" keycode="VK_DOWN" command="Game:rotateanticlockwise"/>
+		<key id="dropkey" keycode="VK_ENTER" command="Game:dropall"/>
+		<key id="dropkeyalt1" keycode="VK_RETURN" command="Game:dropall"/>
+		<key id="dropkeyalt2" key=" " command="Game:dropall"/>
+		<key id="paws" key="&key.pause;" command="UI:pause"/>
+		<key id="key_newgame" key="&key.newgame;" command="UI:1player"/>
+		<key id="key1player" key="1" command="UI:1player"/>
+		<key id="key2player" key="2" command="UI:2player"/>
+		<key id="killgame" key="&key.killgame;" command="UI:killgame"/>
+		<key id="options" key="&key.options;" command="UI:1Poptions"/>
+	</keyset>
+
+	<broadcasterset id="broadcasterset">
+		<broadcaster id="Game:moveleft" value="&game.moveleft;" oncommand="moveleft();"/>
+		<broadcaster id="Game:moveright" value="&game.moveright;" oncommand="moveright();"/>
+		<broadcaster id="Game:rotateclockwise" value="&game.rotateclockwise;" oncommand="rotateclockwise();"/>
+		<broadcaster id="Game:rotateanticlockwise" value="&game.rotateanticlockwise;" oncommand="droppiece();"/>
+		<broadcaster id="Game:dropall" value="&game.drop;" oncommand="droppieceall();"/>
+		<broadcaster id="UI:pause" value="&ui.pause;" oncommand="pause();unfocus();"/>
+		<broadcaster id="UI:killgame" value="&ui.killgame;" oncommand="gameOverMan();unfocus();"/>
+		<broadcaster id="UI:1player" value="&ui.1player;" oncommand="newOPGame();unfocus();"/>
+		<broadcaster id="UI:2player" value="&ui.2player;" oncommand="startNewTPGame();"/>
+		<broadcaster id="UI:1Poptions" value="&ui.1Poptions;" oncommand="unfocus();showOptionsWindow();unfocus();"/>
+		<broadcaster id="UI:highscores" value="&ui.highscores;" oncommand="openHighScores();unfocus();"/>
+		<broadcaster id="UI:instructions" value="&ui.instructions;" oncommand="unfocus();showInstructionsWindow();unfocus();"/>
+	</broadcasterset>
+
+	<box orient="horizontal" id="superbox" style="background-color: black;">
+		<spring flex="1"/>
+		<stack>
+			<box orient="horizontal">
+				<grid id="maingrid">
+				   <columns id="columns">
+					 <column/> <column/> <column/> <column/> <column/> <column/> <column/> <column/> <column/>
+				   </columns>
+				   <rows id="rows">
+					 <row>
+						<spring class="greyborder" id="r00c00"/>
+						<spring class="greyborder" id="r00c01"/>
+						<spring class="greyborder" id="r00c02"/>
+						<spring class="greyborder" id="r00c03"/>
+						<spring class="greyborder" id="r00c04"/>
+						<spring class="greyborder" id="r00c05"/>
+						<spring class="greyborder" id="r00c06"/>
+						<spring class="greyborder" id="r00c07"/>
+						<spring class="greyborder" id="r00c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="r01c00"/>
+						<spring class="greyborder" id="r01c01"/>
+						<spring class="greyborder" id="r01c02"/>
+						<spring class="greyborder" id="r01c03"/>
+						<spring class="greyborder" id="r01c04"/>
+						<spring class="greyborder" id="r01c05"/>
+						<spring class="greyborder" id="r01c06"/>
+						<spring class="greyborder" id="r01c07"/>
+						<spring class="greyborder" id="r01c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="r02c00"/>
+						<spring class="greyborder" id="r02c01"/>
+						<spring class="greyborder" id="r02c02"/>
+						<spring class="greyborder" id="r02c03"/>
+						<spring class="greyborder" id="r02c04"/>
+						<spring class="greyborder" id="r02c05"/>
+						<spring class="greyborder" id="r02c06"/>
+						<spring class="greyborder" id="r02c07"/>
+						<spring class="greyborder" id="r02c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="r03c00"/>
+						<spring class="greyborder" id="r03c01"/>
+						<spring class="greyborder" id="r03c02"/>
+						<spring class="greyborder" id="r03c03"/>
+						<spring class="greyborder" id="r03c04"/>
+						<spring class="greyborder" id="r03c05"/>
+						<spring class="greyborder" id="r03c06"/>
+						<spring class="greyborder" id="r03c07"/>
+						<spring class="greyborder" id="r03c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="r04c00"/>
+						<spring class="greyborder" id="r04c01"/>
+						<spring class="greyborder" id="r04c02"/>
+						<spring class="greyborder" id="r04c03"/>
+						<spring class="greyborder" id="r04c04"/>
+						<spring class="greyborder" id="r04c05"/>
+						<spring class="greyborder" id="r04c06"/>
+						<spring class="greyborder" id="r04c07"/>
+						<spring class="greyborder" id="r04c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="r05c00"/>
+						<spring class="greyborder" id="r05c01"/>
+						<spring class="greyborder" id="r05c02"/>
+						<spring class="greyborder" id="r05c03"/>
+						<spring class="greyborder" id="r05c04"/>
+						<spring class="greyborder" id="r05c05"/>
+						<spring class="greyborder" id="r05c06"/>
+						<spring class="greyborder" id="r05c07"/>
+						<spring class="greyborder" id="r05c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="r06c00"/>
+						<spring class="greyborder" id="r06c01"/>
+						<spring class="greyborder" id="r06c02"/>
+						<spring class="greyborder" id="r06c03"/>
+						<spring class="greyborder" id="r06c04"/>
+						<spring class="greyborder" id="r06c05"/>
+						<spring class="greyborder" id="r06c06"/>
+						<spring class="greyborder" id="r06c07"/>
+						<spring class="greyborder" id="r06c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="r07c00"/>
+						<spring class="greyborder" id="r07c01"/>
+						<spring class="greyborder" id="r07c02"/>
+						<spring class="greyborder" id="r07c03"/>
+						<spring class="greyborder" id="r07c04"/>
+						<spring class="greyborder" id="r07c05"/>
+						<spring class="greyborder" id="r07c06"/>
+						<spring class="greyborder" id="r07c07"/>
+						<spring class="greyborder" id="r07c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="r08c00"/>
+						<spring class="greyborder" id="r08c01"/>
+						<spring class="greyborder" id="r08c02"/>
+						<spring class="greyborder" id="r08c03"/>
+						<spring class="greyborder" id="r08c04"/>
+						<spring class="greyborder" id="r08c05"/>
+						<spring class="greyborder" id="r08c06"/>
+						<spring class="greyborder" id="r08c07"/>
+						<spring class="greyborder" id="r08c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="r09c00"/>
+						<spring class="greyborder" id="r09c01"/>
+						<spring class="greyborder" id="r09c02"/>
+						<spring class="greyborder" id="r09c03"/>
+						<spring class="greyborder" id="r09c04"/>
+						<spring class="greyborder" id="r09c05"/>
+						<spring class="greyborder" id="r09c06"/>
+						<spring class="greyborder" id="r09c07"/>
+						<spring class="greyborder" id="r09c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="r10c00"/>
+						<spring class="greyborder" id="r10c01"/>
+						<spring class="greyborder" id="r10c02"/>
+						<spring class="greyborder" id="r10c03"/>
+						<spring class="greyborder" id="r10c04"/>
+						<spring class="greyborder" id="r10c05"/>
+						<spring class="greyborder" id="r10c06"/>
+						<spring class="greyborder" id="r10c07"/>
+						<spring class="greyborder" id="r10c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="r11c00"/>
+						<spring class="greyborder" id="r11c01"/>
+						<spring class="greyborder" id="r11c02"/>
+						<spring class="greyborder" id="r11c03"/>
+						<spring class="greyborder" id="r11c04"/>
+						<spring class="greyborder" id="r11c05"/>
+						<spring class="greyborder" id="r11c06"/>
+						<spring class="greyborder" id="r11c07"/>
+						<spring class="greyborder" id="r11c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="r12c00"/>
+						<spring class="greyborder" id="r12c01"/>
+						<spring class="greyborder" id="r12c02"/>
+						<spring class="greyborder" id="r12c03"/>
+						<spring class="greyborder" id="r12c04"/>
+						<spring class="greyborder" id="r12c05"/>
+						<spring class="greyborder" id="r12c06"/>
+						<spring class="greyborder" id="r12c07"/>
+						<spring class="greyborder" id="r12c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="r13c00"/>
+						<spring class="greyborder" id="r13c01"/>
+						<spring class="greyborder" id="r13c02"/>
+						<spring class="greyborder" id="r13c03"/>
+						<spring class="greyborder" id="r13c04"/>
+						<spring class="greyborder" id="r13c05"/>
+						<spring class="greyborder" id="r13c06"/>
+						<spring class="greyborder" id="r13c07"/>
+						<spring class="greyborder" id="r13c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="r14c00"/>
+						<spring class="greyborder" id="r14c01"/>
+						<spring class="greyborder" id="r14c02"/>
+						<spring class="greyborder" id="r14c03"/>
+						<spring class="greyborder" id="r14c04"/>
+						<spring class="greyborder" id="r14c05"/>
+						<spring class="greyborder" id="r14c06"/>
+						<spring class="greyborder" id="r14c07"/>
+						<spring class="greyborder" id="r14c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="r15c00"/>
+						<spring class="greyborder" id="r15c01"/>
+						<spring class="greyborder" id="r15c02"/>
+						<spring class="greyborder" id="r15c03"/>
+						<spring class="greyborder" id="r15c04"/>
+						<spring class="greyborder" id="r15c05"/>
+						<spring class="greyborder" id="r15c06"/>
+						<spring class="greyborder" id="r15c07"/>
+						<spring class="greyborder" id="r15c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="r16c00"/>
+						<spring class="greyborder" id="r16c01"/>
+						<spring class="greyborder" id="r16c02"/>
+						<spring class="greyborder" id="r16c03"/>
+						<spring class="greyborder" id="r16c04"/>
+						<spring class="greyborder" id="r16c05"/>
+						<spring class="greyborder" id="r16c06"/>
+						<spring class="greyborder" id="r16c07"/>
+						<spring class="greyborder" id="r16c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="r17c00"/>
+						<spring class="greyborder" id="r17c01"/>
+						<spring class="greyborder" id="r17c02"/>
+						<spring class="greyborder" id="r17c03"/>
+						<spring class="greyborder" id="r17c04"/>
+						<spring class="greyborder" id="r17c05"/>
+						<spring class="greyborder" id="r17c06"/>
+						<spring class="greyborder" id="r17c07"/>
+						<spring class="greyborder" id="r17c08"/>
+					 </row>
+				   </rows>
+				</grid>
+			</box>
+			<vbox id="infotextbox"><hbox><text id="infotext" value="&ui.hitntobegin;"/></hbox></vbox>
+		</stack>
+		<vbox id="righttext">
+            <image src="chrome://xultris/content/xultris.gif"/>
+			<hbox class="title" pack="center">
+				<text id="version" value="v&package.version;"/>
+			</hbox>
+			<hbox class="score" pack="center">
+				<text value="&ui.score;: "/>
+				<text value="&game.initialscore;" id="currentscore"/>
+			</hbox>
+			<hbox class="level" pack="center">
+				<text value="&ui.level;: "/>
+				<text value="&game.initiallevel;" id="currentlevel"/>
+			</hbox>
+			<hbox class="totalrows" pack="center">
+				<text value="&ui.totalrows;: "/>
+				<text value="&game.initialrows;" id="totalrows"/>
+			</hbox>
+			<hbox class="connectedb" pack="center">
+                <text value="&ui.connected;" id="connected"/>
+			</hbox>
+			<hbox class="nextpiece" pack="center">
+				<text value="&ui.nextpiece;:"/>
+			</hbox>
+			<hbox pack="center">
+				<grid id="pgrid">
+				   <columns id="pcolumns">
+					 <column/> <column/> <column/> <column/>
+				   </columns>
+				   <rows id="prows">
+					 <row>
+						<spring class="greyborder" id="pr00c00"/>
+						<spring class="greyborder" id="pr00c01"/>
+						<spring class="greyborder" id="pr00c02"/>
+						<spring class="greyborder" id="pr00c03"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="pr01c00"/>
+						<spring class="greyborder" id="pr01c01"/>
+						<spring class="greyborder" id="pr01c02"/>
+						<spring class="greyborder" id="pr01c03"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="pr02c00"/>
+						<spring class="greyborder" id="pr02c01"/>
+						<spring class="greyborder" id="pr02c02"/>
+						<spring class="greyborder" id="pr02c03"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="pr03c00"/>
+						<spring class="greyborder" id="pr03c01"/>
+						<spring class="greyborder" id="pr03c02"/>
+						<spring class="greyborder" id="pr03c03"/>
+					 </row>
+				  </rows>
+				</grid>
+			</hbox>
+			<spring flex="1"/>
+            <vbox id="buttoncontainer" flex="1">
+			<hbox pack="center">
+				<button class="dialog" id="button1player" label="&ui.newgame;" observes="UI:1player"/>
+			</hbox>
+			<hbox collapsed="true">
+				<button class="dialog" id="buttonOptions" label="&ui.1Poptions;" observes="UI:1Poptions"/>
+			</hbox>
+			<hbox pack="center">
+				<button class="dialog" id="button2player" label="&ui.2player;" observes="UI:2player" disabled="true"/>
+			</hbox>
+			<hbox pack="center">
+				<button class="dialog" id="pauseButton" label="&ui.pause;" observes="UI:pause"/>
+			</hbox>
+            </vbox>
+
+<!--
+removed until the scoring algorithm settles
+			<hbox>
+				<button class="dialog" id="highscoresButton" label="&ui.highscores;" observes="UI:highscores"/>
+			</hbox>
+-->
+			<hbox collapsed="true">
+				<button class="dialog" id="instructionsButton" label="&ui.instructions;" observes="UI:instructions"/>
+			</hbox>
+
+		</vbox>
+		<spring flex="1"/>
+		<stack>
+			<box orient="horizontal">
+				<grid id="player2">
+				   <columns id="columns2">
+					 <column/> <column/> <column/> <column/> <column/> <column/> <column/> <column/> <column/>
+				   </columns>
+				   <rows id="rows2">
+					 <row>
+						<spring class="greyborder" id="p2r00c00"/>
+						<spring class="greyborder" id="p2r00c01"/>
+						<spring class="greyborder" id="p2r00c02"/>
+						<spring class="greyborder" id="p2r00c03"/>
+						<spring class="greyborder" id="p2r00c04"/>
+						<spring class="greyborder" id="p2r00c05"/>
+						<spring class="greyborder" id="p2r00c06"/>
+						<spring class="greyborder" id="p2r00c07"/>
+						<spring class="greyborder" id="p2r00c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="p2r01c00"/>
+						<spring class="greyborder" id="p2r01c01"/>
+						<spring class="greyborder" id="p2r01c02"/>
+						<spring class="greyborder" id="p2r01c03"/>
+						<spring class="greyborder" id="p2r01c04"/>
+						<spring class="greyborder" id="p2r01c05"/>
+						<spring class="greyborder" id="p2r01c06"/>
+						<spring class="greyborder" id="p2r01c07"/>
+						<spring class="greyborder" id="p2r01c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="p2r02c00"/>
+						<spring class="greyborder" id="p2r02c01"/>
+						<spring class="greyborder" id="p2r02c02"/>
+						<spring class="greyborder" id="p2r02c03"/>
+						<spring class="greyborder" id="p2r02c04"/>
+						<spring class="greyborder" id="p2r02c05"/>
+						<spring class="greyborder" id="p2r02c06"/>
+						<spring class="greyborder" id="p2r02c07"/>
+						<spring class="greyborder" id="p2r02c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="p2r03c00"/>
+						<spring class="greyborder" id="p2r03c01"/>
+						<spring class="greyborder" id="p2r03c02"/>
+						<spring class="greyborder" id="p2r03c03"/>
+						<spring class="greyborder" id="p2r03c04"/>
+						<spring class="greyborder" id="p2r03c05"/>
+						<spring class="greyborder" id="p2r03c06"/>
+						<spring class="greyborder" id="p2r03c07"/>
+						<spring class="greyborder" id="p2r03c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="p2r04c00"/>
+						<spring class="greyborder" id="p2r04c01"/>
+						<spring class="greyborder" id="p2r04c02"/>
+						<spring class="greyborder" id="p2r04c03"/>
+						<spring class="greyborder" id="p2r04c04"/>
+						<spring class="greyborder" id="p2r04c05"/>
+						<spring class="greyborder" id="p2r04c06"/>
+						<spring class="greyborder" id="p2r04c07"/>
+						<spring class="greyborder" id="p2r04c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="p2r05c00"/>
+						<spring class="greyborder" id="p2r05c01"/>
+						<spring class="greyborder" id="p2r05c02"/>
+						<spring class="greyborder" id="p2r05c03"/>
+						<spring class="greyborder" id="p2r05c04"/>
+						<spring class="greyborder" id="p2r05c05"/>
+						<spring class="greyborder" id="p2r05c06"/>
+						<spring class="greyborder" id="p2r05c07"/>
+						<spring class="greyborder" id="p2r05c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="p2r06c00"/>
+						<spring class="greyborder" id="p2r06c01"/>
+						<spring class="greyborder" id="p2r06c02"/>
+						<spring class="greyborder" id="p2r06c03"/>
+						<spring class="greyborder" id="p2r06c04"/>
+						<spring class="greyborder" id="p2r06c05"/>
+						<spring class="greyborder" id="p2r06c06"/>
+						<spring class="greyborder" id="p2r06c07"/>
+						<spring class="greyborder" id="p2r06c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="p2r07c00"/>
+						<spring class="greyborder" id="p2r07c01"/>
+						<spring class="greyborder" id="p2r07c02"/>
+						<spring class="greyborder" id="p2r07c03"/>
+						<spring class="greyborder" id="p2r07c04"/>
+						<spring class="greyborder" id="p2r07c05"/>
+						<spring class="greyborder" id="p2r07c06"/>
+						<spring class="greyborder" id="p2r07c07"/>
+						<spring class="greyborder" id="p2r07c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="p2r08c00"/>
+						<spring class="greyborder" id="p2r08c01"/>
+						<spring class="greyborder" id="p2r08c02"/>
+						<spring class="greyborder" id="p2r08c03"/>
+						<spring class="greyborder" id="p2r08c04"/>
+						<spring class="greyborder" id="p2r08c05"/>
+						<spring class="greyborder" id="p2r08c06"/>
+						<spring class="greyborder" id="p2r08c07"/>
+						<spring class="greyborder" id="p2r08c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="p2r09c00"/>
+						<spring class="greyborder" id="p2r09c01"/>
+						<spring class="greyborder" id="p2r09c02"/>
+						<spring class="greyborder" id="p2r09c03"/>
+						<spring class="greyborder" id="p2r09c04"/>
+						<spring class="greyborder" id="p2r09c05"/>
+						<spring class="greyborder" id="p2r09c06"/>
+						<spring class="greyborder" id="p2r09c07"/>
+						<spring class="greyborder" id="p2r09c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="p2r10c00"/>
+						<spring class="greyborder" id="p2r10c01"/>
+						<spring class="greyborder" id="p2r10c02"/>
+						<spring class="greyborder" id="p2r10c03"/>
+						<spring class="greyborder" id="p2r10c04"/>
+						<spring class="greyborder" id="p2r10c05"/>
+						<spring class="greyborder" id="p2r10c06"/>
+						<spring class="greyborder" id="p2r10c07"/>
+						<spring class="greyborder" id="p2r10c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="p2r11c00"/>
+						<spring class="greyborder" id="p2r11c01"/>
+						<spring class="greyborder" id="p2r11c02"/>
+						<spring class="greyborder" id="p2r11c03"/>
+						<spring class="greyborder" id="p2r11c04"/>
+						<spring class="greyborder" id="p2r11c05"/>
+						<spring class="greyborder" id="p2r11c06"/>
+						<spring class="greyborder" id="p2r11c07"/>
+						<spring class="greyborder" id="p2r11c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="p2r12c00"/>
+						<spring class="greyborder" id="p2r12c01"/>
+						<spring class="greyborder" id="p2r12c02"/>
+						<spring class="greyborder" id="p2r12c03"/>
+						<spring class="greyborder" id="p2r12c04"/>
+						<spring class="greyborder" id="p2r12c05"/>
+						<spring class="greyborder" id="p2r12c06"/>
+						<spring class="greyborder" id="p2r12c07"/>
+						<spring class="greyborder" id="p2r12c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="p2r13c00"/>
+						<spring class="greyborder" id="p2r13c01"/>
+						<spring class="greyborder" id="p2r13c02"/>
+						<spring class="greyborder" id="p2r13c03"/>
+						<spring class="greyborder" id="p2r13c04"/>
+						<spring class="greyborder" id="p2r13c05"/>
+						<spring class="greyborder" id="p2r13c06"/>
+						<spring class="greyborder" id="p2r13c07"/>
+						<spring class="greyborder" id="p2r13c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="p2r14c00"/>
+						<spring class="greyborder" id="p2r14c01"/>
+						<spring class="greyborder" id="p2r14c02"/>
+						<spring class="greyborder" id="p2r14c03"/>
+						<spring class="greyborder" id="p2r14c04"/>
+						<spring class="greyborder" id="p2r14c05"/>
+						<spring class="greyborder" id="p2r14c06"/>
+						<spring class="greyborder" id="p2r14c07"/>
+						<spring class="greyborder" id="p2r14c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="p2r15c00"/>
+						<spring class="greyborder" id="p2r15c01"/>
+						<spring class="greyborder" id="p2r15c02"/>
+						<spring class="greyborder" id="p2r15c03"/>
+						<spring class="greyborder" id="p2r15c04"/>
+						<spring class="greyborder" id="p2r15c05"/>
+						<spring class="greyborder" id="p2r15c06"/>
+						<spring class="greyborder" id="p2r15c07"/>
+						<spring class="greyborder" id="p2r15c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="p2r16c00"/>
+						<spring class="greyborder" id="p2r16c01"/>
+						<spring class="greyborder" id="p2r16c02"/>
+						<spring class="greyborder" id="p2r16c03"/>
+						<spring class="greyborder" id="p2r16c04"/>
+						<spring class="greyborder" id="p2r16c05"/>
+						<spring class="greyborder" id="p2r16c06"/>
+						<spring class="greyborder" id="p2r16c07"/>
+						<spring class="greyborder" id="p2r16c08"/>
+					 </row>
+					 <row>
+						<spring class="greyborder" id="p2r17c00"/>
+						<spring class="greyborder" id="p2r17c01"/>
+						<spring class="greyborder" id="p2r17c02"/>
+						<spring class="greyborder" id="p2r17c03"/>
+						<spring class="greyborder" id="p2r17c04"/>
+						<spring class="greyborder" id="p2r17c05"/>
+						<spring class="greyborder" id="p2r17c06"/>
+						<spring class="greyborder" id="p2r17c07"/>
+						<spring class="greyborder" id="p2r17c08"/>
+					 </row>
+				   </rows>
+				</grid>
+			</box>
+			<vbox id="infotextbox"><hbox><text id="infotext"
+value="&player2.label;"/></hbox></vbox>
+		</stack>
+
+	</box>
+</window>
