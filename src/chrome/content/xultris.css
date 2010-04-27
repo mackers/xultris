@@ -85,7 +85,8 @@ grid {
 	background-color: black;
 }
 
-#infotextbox {
+#infotextbox,
+#infotextbox2 {
 	padding-top: 100px;
 	height: 100%;
 	width: 100%;
@@ -96,7 +97,9 @@ grid {
 	font-weight: 600;
 }
 
-.desktop #infotextbox {
+.desktop #infotextbox,
+.desktop #infotextbox2
+{
 	font-size: 20px;
 }
 

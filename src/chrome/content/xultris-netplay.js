@@ -1,12 +1,15 @@
 function NetPlayer()
 {
 
-this.netPort = 2778;
+this.netHost = "localhost";
+this.netPort = 7000;
+this.protocol = "2.0";
+
 this.connected = false;
-this.waiting = false;
-this.serverSocket = null;
-this.win = window;
-this.lastHost = "";
+//this.waiting = false;
+//this.serverSocket = null;
+
+this.alias = "";
 
 this.instream = null;
 this.outstream = null;
@@ -15,43 +18,119 @@ this.dataListener = {
 	onStartRequest: function(request, context) {},
 	onStopRequest: function(request, context, status)
 	{
-		if (!netPlayer) return;
-
-		netPlayer.disconnect();
+        try
+        {
+            netPlayer.onOtherPlayerQuit();
+        } catch (e) {}
+        // TODO
+		//netPlayer.disconnect();
 	},
 	onDataAvailable: function(request, context, inputStream, offset, count)
 	{
 		if (!netPlayer) return;
 
-		var data = netPlayer.instream.read(count);
-		
-		var command = data.substr(0,4);
-		var args = data.substr(5);
+        var handleResponse = function(data)
+        {
+            if (!data)
+                return;
 
-		if (command == 'HELO')
-		{
-			// TODO version control here
-			netPlayer.doneHandshake();
-		}
-		else if (command == 'LINE')
-		{
-			addJunk(args);
-		}
-		else if (command == 'UWIN')
-		{
-			gameOverMan(true);
-		}
-		else if (command == 'PAUS')
-		{
-			pause(false, true);
-		}
-		else if (command == 'UNPS')
-		{
-			pause(true, true);
-		}
+            var space = data.indexOf(" ");
+            var resp, payload;
+
+            if (space == -1)
+            {
+                resp = data.trim();
+                payload = "";
+            }
+            else
+            {
+                resp = data.substring(0, space).trim();
+                payload = data.substring(space+1).trim();
+            }
+
+            dump("server sent response '" + resp + "' with payload '" + payload + "'\n"); 
+            
+            if (resp == 'protocol')
+            {
+                if (payload != netPlayer.protocol)
+                    return netPlayer.onProtocolMismatch();
+
+                netPlayer.changeNick(netPlayer.alias);
+            }
+            else if (resp == 'nick')
+            {
+                netPlayer.onChangeNick(payload);
+
+                netPlayer.listAvailablePlayers();
+            }
+            else if (resp == 'list')
+            {  
+                if (payload == '')
+                    netPlayer.onListAvailablePlayers(null);
+
+                // payload looks like: list 1946=ook ook|
+                var bits = payload.split("|");
+                var players = [];
+
+                for (var i=0; i<bits.length; i++)
+                {
+                    var bits2 = bits[i].split("=");
+                    if (bits2[1])
+                        players.push({id: bits2[0], name: bits2[1]});
+                }
+
+                if (players != null && players.length == 0)
+                    players = null;
+
+                netPlayer.onListAvailablePlayers(players);
+            }
+            else if (resp == 'playing')
+            {
+                netPlayer.onStartPlaying(payload);
+            }
+            else if (resp == 'send')
+            {
+                netPlayer.onReceiveLines(parseInt(payload));
+            }
+            else if (resp == 'sync')
+            {
+                // TODO
+            }
+            else if (resp == 'youwin')
+            {
+                netPlayer.onYouWin();
+            }
+            else if (resp == 'youlose')
+            {
+                netPlayer.onYouLose();
+            }
+            else if (resp == 'pause')
+            {
+                netPlayer.onPause();
+            }
+            else if (resp == 'unpause')
+            {
+                netPlayer.onUnpause();
+            }
+            else if (resp == 'goodbye')
+            {
+                netPlayer.onGoodbye();
+            }
+            else
+            {
+                //return netPlayer.onGeneralError();
+            }
+        };
+
+		var rawdata = netPlayer.instream.read(count);
+        var bits = rawdata.split(/\r\n/);
+
+        for (var i=0; i<bits.length; i++)
+            handleResponse(bits[i]);
 	}
 };
 
+/*
 this.listener =
 {
 	onSocketAccepted : function(socket, transport)
@@ -68,10 +147,9 @@ this.listener =
 		
 			netPlayer.serverSocket.close();
 
-			netPlayer.startHandshake();
-
+            netPlayer.sendProtocol();
 		}
-		catch(e)
+		catch
 		{ 
 			netPlayer.win.alert(e);
 		}
@@ -82,12 +160,11 @@ this.listener =
 	},
 	onStopListening : function(socket, status) {}
 };
+*/
 
 this.init = function()
 {
 	this.connected = false;
-	this.waiting = false;
-	this.lastHost = "";
 }
 
 this.isConnected = function()
@@ -95,22 +172,21 @@ this.isConnected = function()
 	return this.connected;
 }
 
+/*
 this.isWaiting = function()
 {
 	return this.waiting;
 }
+*/
 
-this.startClient = function(host)
+this.connectToServerAndListAvailablePlayers = function()
 {
-	this.lastHost = host;
-
 	try
 	{
 		var transportService = Components.classes["@mozilla.org/network/socket-transport-service;1"].getService(Components.interfaces.nsISocketTransportService);
-		var transport = transportService.createTransport(null,0,host,this.netPort,null);
+		var transport = transportService.createTransport(null,0,this.netHost,this.netPort,null);
 
 		this.outstream = transport.openOutputStream(0,0,0);
-		this.startHandshake();
 
 		var stream = transport.openInputStream(0,0,0);
 		this.instream = Components.classes["@mozilla.org/scriptableinputstream;1"].createInstance(Components.interfaces.nsIScriptableInputStream);
@@ -120,14 +196,82 @@ this.startClient = function(host)
 		pump.init(stream, -1, -1, 0, 0, false);
 		pump.asyncRead(this.dataListener,netPlayer);
 
-		return true;
+        setTimeout(netPlayer.sendProtocol, 200);
+        netPlayer.connected = true;
 	}
 	catch (e)
 	{
-		return false;
+        netPlayer.onCannotConnectToServer(e);
 	}	
 }
 
+this.disconnect = function()
+{
+	this.connected = false;
+
+	if (this.outstream) this._sendData("quit");
+
+	if (this.outstream) this.outstream.close();
+	if (this.instream) this.instream.close();
+
+    this.outstream = null;
+    this.instream = null;
+}
+
+this._sendData = function(data)
+{
+	if (!this.outstream) return;
+    dump("sending data to server: '" + data + "'\n");
+	this.outstream.write(data+"\r\n", data.length+2);
+}
+
+this.sendProtocol = function()
+{
+    netPlayer._sendData("protocol " + netPlayer.protocol);
+}
+
+this.changeNick = function(nick)
+{
+    netPlayer._sendData("nick " + nick);
+}
+
+this.listAvailablePlayers = function()
+{
+    netPlayer._sendData("list");
+}
+
+this.choosePlayer = function(playerId)
+{
+    netPlayer._sendData("play " + playerId);
+}
+
+this.pushLines = function(numLines)
+{
+	netPlayer._sendData("send " + numLines);
+}
+
+this.pushPause = function()
+{
+	netPlayer._sendData("pause");
+}
+
+this.pushUnpause = function()
+{
+	netPlayer._sendData("unpause");
+}
+
+this.pushWin = function()
+{
+	netPlayer._sendData("iwin");
+}
+
+this.pushLose = function()
+{
+	netPlayer._sendData("ilose");
+}
+
+
+/*
 this.startServer = function()
 {
 	this.waiting = true;
@@ -149,12 +293,6 @@ this.startServer = function()
 	}
 }
 
-this.writeMessage = function(message)
-{
-	if (!this.outstream) return;
-	this.outstream.write(message+"\n", message.length+1);
-}
-
 this.startHandshake = function()
 {
 	this.writeMessage("HELO " + version);
@@ -167,155 +305,7 @@ this.doneHandshake = function()
 
 	this.win.close();
 }
-
-this.disconnect = function()
-{
-	if (this.outstream) this.outstream.close();
-	if (this.instream) this.instream.close();
-	if (this.serverSocket) this.serverSocket.close();
-
-	this.waiting = false;
-	this.connected = false;
-
-	if (this.win.document && this.win.document.getElementById("connected"))
-	{
-		this.win.document.getElementById("connected").setAttribute("style","display: hidden;");
-	}
-}
-
-this.pushPause = function()
-{
-	this.writeMessage("PAUS");
-}
-
-this.pushUnpause = function()
-{
-	this.writeMessage("UNPS");
-}
-
-this.pushWin = function()
-{
-	this.writeMessage("UWIN");
-	this.disconnect();
-}
-
-this.pushLines = function(numLines)
-{
-	this.writeMessage("LINE " + numLines);
-}
-
-}
-
-/*
-function clientStart() {
-	mDump("Starting client");
-	p2ip=window.prompt("Please enter Player 2's IP address:");
-	if (p2ip==null) return;
-	netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
-	gameOverMan();
-	setInfoText("Connecting...");
-	theSocket = new Socket();
-	theSocket.open(p2ip,netPort); // doesn't mean it worked!
-	mDump("Connection with "+p2ip+":"+netPort+" opened");
-	//try {
-	//	theSocket.async(window.process);
-		//theSocket.write("<xultris:xultris protocol='xultris-1.0'>\n");
-		netplayWrite("<xultris:xultris protocol='xultris-2.2'>");
-		var hs1=theSocket.read(netTimeOut);
-		mDump("in: "+hs1);
-		if (hs1=="") {
-			alert("Couldn't open connection with "+p2ip+":"+netPort);
-			xultrisSocketCancelAll();
-			return;
-		}
-		setInfoText("Connected!!!");
-		if (hs1.indexOf("<xultris:xultris")!=0) {
-			alert("Unknown protocol! ("+hs1+")");
-			xultrisSocketCancelAll();
-			return;
-		}
-		hs1=hs1.substring(27,38);
-		if (hs1!="xultris-1.0") {
-			alert("Incompatible protocol version ("+hs1+")");
-			xultrisSocketCancelAll();
-			return;
-		}
-	//} catch (ex) {
-	//	dump("An unknown socket error occured\n");
-	//}
-	document.getElementById("connected").setAttribute("style","display: block;");
-	is2player=true;
-	newGame();
-}
-
-function xultrisSocketError() {
-	alert("An error occured while connecting to "+p2ip+":"+netPort);
-}
-
-function xultrisSocketCancelAll() {
-	clearInfoText();
-}
-
-function netplayTransferLines(num) {
-	//dump("sending netplay lines: "+num+"\n");
-	var theHole=Math.floor(Math.random()*widthofgrid)
-	//theSocket.write("<xultris:lines quantity='"+num+"' hole='"+theHole+"'/>\n");
-	netplayWrite("<xultris:lines quantity='"+num+"' hole='"+theHole+"'/>");
-}
-
-function netplayReadLine() {
-    var thisLine;
-    var tl;
-
-    if (((tl=theSocket.read(netTimeOut))!=null)&&(tl!="")) {
-       thisLine = tl;
-    }
-    else
-    {
-    }
-    else
-    {
-      return;
-    }
-
-    mDump("in: "+thisLine);
-
-	if (thisLine.indexOf("<xultris:lines")==0) {
-		netplayAddLines(thisLine.substring(25,26),thisLine.substring(34,35));
-	} else if (thisLine.indexOf("<xultris:pause/>")==0) {
-		pause();
-	} else if (thisLine.indexOf("<xultris:unpause/>")==0) {
-		pause(true);
-	} else if (thisLine.indexOf("<xultris:youwin/>")==0) {
-		gameOverMan(true);
-	} else if (thisLine.indexOf("</xultris:xultris>")==0) {
-		theSocket.close();
-	}
-}
-
-function netplayHandshake() {
-	netplayWrite("<xultris:xultris protocol='xultris-2.2'>");
-}
-
-function netplayDisconnect() {
-	//theSocket.write("</xultris:xultris>\n");
-	netplayWrite("</xultris:xultris>");
-	document.getElementById("connected").setAttribute("style","");
-	theSocket.close();
-}
-
-function netplayWrite(str) {
-	//if (!is2player) return;
-
-	if (theSocket)
-	{
-		theSocket.write(str+"\n");
-	}
-	else if (outstream)
-	{
-		outstream.write(str+"\n", str.length+1);
-	}
-
-	if (debug) mDump ("out: "+str);
-}
 */
+
+}
+

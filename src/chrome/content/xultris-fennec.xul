@@ -585,7 +585,7 @@ removed until the scoring algorithm settles
 				   </rows>
 				</grid>
 			</box>
-			<vbox id="infotextbox"><hbox><text id="infotext"
+			<vbox id="infotextbox2"><hbox><text id="infotext2"
 value="&player2.label;"/></hbox></vbox>
 		</stack>
 

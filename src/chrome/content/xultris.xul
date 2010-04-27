@@ -584,26 +584,24 @@
                        </rows>
                     </grid>
                 </box>
-                <vbox id="infotextbox"><hbox><text id="infotext"
-    value="&player2.label;"/></hbox></vbox>
+                <vbox id="infotextbox2"><hbox><text id="infotext2" value="&player2.label;"/></hbox></vbox>
             </stack>
         </box>
      
         <vbox id="netplay" collapsed="true" style="background-color: black; border: 2px solid yellow; color: yellow; margin: 40px 100px; padding: 10px;">
             <hbox flex="1" align="center">
                 <label value="&netplay.yourplayername.label;"/>
-                <textbox id="netplay-player-name" oninput="invalidateNetPlayConnectButton();"/>
+                <textbox id="netplay-player-name" oninput="invalidateNetPlayConnectButton();" maxlength="12"/>
                 <button id="netplay-connect-button" label="&netplay.connect.label;" disabled="true" onclick="netPlayConnect();"/>
             </hbox>
             <hbox style="margin: 20px 35px;" flex="1">
                 <listbox id="netplay-list"/>
                 <vbox>
-                    <button label="&netplay.play.label;" disabled="true"/>
+                    <button id="netplay-play" label="&netplay.play.label;" disabled="true" onclick="netPlayStart();"/>
                     <button label="&netplay.cancel.label;" onclick="hideNetPlayDialog();"/>
                 </vbox>
             </hbox>
-            <label id="netplay-connecting" collapsed="true" value="&netplay.connecting.label;"/>
-            <label id="netplay-error-connecting" collapsed="true" value="&netplay.errorconnecting.label;"/>
+            <label id="netplay-status" value=""/>
         </vbox>
 
      </stack>

@@ -49,6 +49,7 @@ var netPlayer;
 var is2player;
 var fullpiece = new Piece([0,0,0,1,0,2,0,3,1,0,1,1,1,2,1,3,2,0,2,1,2,2,2,3,3,0,3,1,3,2,3,3],[0,0,0,1,0,2,0,3,1,0,1,1,1,2,1,3,2,0,2,1,2,2,2,3,3,0,3,1,3,2,3,3],[0,0,0,1,0,2,0,3,1,0,1,1,1,2,1,3,2,0,2,1,2,2,2,3,3,0,3,1,3,2,3,3],[0,0,0,1,0,2,0,3,1,0,1,1,1,2,1,3,2,0,2,1,2,2,2,3,3,0,3,1,3,2,3,3],"");
 var playerName;
+var listTimer;
 
 function Piece(p1,p2,p3,p4,style)
 {
@@ -273,6 +274,8 @@ function newGame(inlevel, injunk)
 		injunk = 0;
 	}
 
+    ensureGameHasFocus();
+
 	resetScore();  //score to 0
 	resetLevel(inlevel);
 	resetRows();  //set totalrows to 0
@@ -299,6 +302,18 @@ function newGame(inlevel, injunk)
 	unhalt();
 	niceInfoText("Go!!!");
 	spawnNewPiece();
+}
+
+function ensureGameHasFocus()
+{
+    var buttons = document.getElementsByTagName("button");
+
+    for (var i=0; i<buttons.length; i++)
+    {
+        buttons[i].blur();
+    }
+
+    window.focus();
 }
 
 function isMobile()
@@ -525,12 +540,14 @@ function youLose()
 	//theSocket.write("<xultris:youwin/>\n");
 	//netplayWrite("<xultris:youwin/>");
 
-	if (netPlayer) netPlayer.pushWin();
+	if (netPlayer) netPlayer.pushLose();
 }
 
 function youWin()
 {
 	setInfoText("You Win!");
+
+	if (netPlayer) netPlayer.pushWin();
 }
 
 function checkForFullLine(start,range)
@@ -811,6 +828,11 @@ function resetRows()
 function setInfoText(t)
 {
 	document.getElementById("infotext").setAttribute("value",t);
+}
+
+function setInfoText2(t)
+{
+	document.getElementById("infotext2").setAttribute("value",t);
 }
 
 function clearInfoText()
@@ -1109,6 +1131,24 @@ function showNetPlayDialog()
     document.getElementById("superbox").style.opacity = "0.75";
     document.getElementById("netplay").collapsed = false;
     document.getElementById("netplay-player-name").focus();
+
+    clearNetPlayDialog();
+}
+
+function clearNetPlayDialog()
+{
+    var lb = document.getElementById("netplay-list");
+
+    while (lb.itemCount > 0)
+    {
+        lb.removeItemAt(0);
+    }
+
+    document.getElementById("netplay-play").disabled = true;
+    document.getElementById("netplay-status").value = "";
+
+    if (listTimer)
+        clearTimeout(listTimer);
 }
 
 function hasBlockingDialog()
@@ -1121,6 +1161,22 @@ function invalidateNetPlayConnectButton()
     document.getElementById("netplay-connect-button").disabled = (document.getElementById("netplay-player-name").value == "");
 }
 
+function disconnectNetPlayer()
+{
+    if (netPlayer)
+        netPlayer.disconnect();
+
+	is2player = false;
+	gameison = false;
+	halt();
+    setInfoText("Disconnected D:");
+    setInfoText2("Player 2");
+
+    document.getElementById("connected").setAttribute("style","display: none;");
+
+    clearNetPlayDialog();
+}
+
 function netPlayConnect()
 {
     var prefs = Components.classes["@mozilla.org/preferences-service;1"]
@@ -1131,12 +1187,88 @@ function netPlayConnect()
         prefs.setCharPref("player-name", document.getElementById("netplay-player-name").value);
     } catch (e) {}
 
-    // TODO magic
+    var sl = document.getElementById("netplay-status");
+
+    netPlayer.onOtherPlayerQuit = function() {}
+    netPlayer.disconnect();
+
+    netPlayer.onProtocolMismatch = function() { sl.value = "Error establishing a communication with the server."; disconnectNetPlayer(); }
+    netPlayer.onCannotConnectToServer = function(e) { sl.value = "Cannot connect to the Xultris server: " + e; disconnectNetPlayer(); }
+    netPlayer.onOtherPlayerQuit = function() { sl.value = "Not connected."; disconnectNetPlayer(); }
+    netPlayer.onChangeNick = function(nick) { document.getElementById("netplay-player-name").value = nick; }
+    netPlayer.onGeneralError = function() { sl.value = "There was an unexpected error; disconnecting."; clearNetPlayDialog(); disconnectNetPlayer(); }
+    netPlayer.onListAvailablePlayers = function(players)
+    {
+        var lb = document.getElementById("netplay-list");
+        var sel = (lb.selectedItem?lb.selectedItem.value:-1);
+
+        clearNetPlayDialog();
+        listTimer = setTimeout(netPlayer.listAvailablePlayers, 2000);
+
+        if (players == null)
+        {
+            sl.value = "Connected. No other players online.";
+        }
+        else
+        {
+            sl.value = "Connected.";
+
+            for (var i=0; i<players.length; i++)
+            {
+                if (players[i].name)
+                {
+                    var newListItem = lb.appendItem(players[i].name, players[i].id);
+
+                    if (newListItem.value == sel)
+                        lb.selectedItem = newListItem;
+                }
+            }
+        }
+
+        document.getElementById("netplay-play").disabled = (lb.selectedIndex==-1);
+    };
+    netPlayer.onStartPlaying = function(nick)
+    {
+        clearNetPlayDialog();
+
+        document.getElementById("superbox").style.opacity = "1";
+        document.getElementById("netplay").collapsed = true;
+
+		document.getElementById("connected").setAttribute("style","display: block;");
+        setInfoText2(nick);
+
+        is2player = true;
+        readPrefs();
+        newGame();
+    };
+    netPlayer.onReceiveLines = function(numLines) { addJunk(numLines); }
+    netPlayer.onYouWin = function() { disconnectNetPlayer(); gameOverMan(true); }
+    netPlayer.onYouLose = function() { disconnectNetPlayer(); gameOverMan(false); }
+    netPlayer.onGoodbye = function() { disconnectNetPlayer(); }
+    netPlayer.onPause = function() { pause(false, true); }
+    netPlayer.onUnpause = function() { pause(true, true); }
+    netPlayer.onSync = function() { /* TODO */ }
+
+    netPlayer.alias = document.getElementById("netplay-player-name").value;
+    netPlayer.connectToServerAndListAvailablePlayers();
 }
 
 function hideNetPlayDialog()
 {
+    dump("disconnecting netplay\n");
+    netPlayer.disconnect();
+
     document.getElementById("superbox").style.opacity = "1";
     document.getElementById("netplay").collapsed = true;
 }
 
+function netPlayStart()
+{
+    var lb = document.getElementById("netplay-list");
+    var playerId = (lb.selectedItem?lb.selectedItem.value:-1);
+
+    if (playerId == -1)
+        return;
+
+    netPlayer.choosePlayer(playerId);
+}

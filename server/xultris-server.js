@@ -44,7 +44,7 @@ var server = tcp.createServer(function (socket)
         session.nick = "Player " + session.id;
 
         sessions[session.id] = session;
-        socket.send("Welcome to Xultris Server v" + VERSION + "\r\n");
+        //socket.send("Welcome to Xultris Server v" + VERSION + "\r\n");
 
         socket.session = session;
         session.socket = socket;
@@ -52,137 +52,188 @@ var server = tcp.createServer(function (socket)
 
     socket.addListener("receive", function (data)
     {
-        socket.session.poke();
-
-        var cs = data.indexOf(" ");
-
-        if (cs > 0)
+        try
         {
-            var command = data.substring(0,cs);
-            var payload = data.substring(cs+1,data.length-2);
+            socket.session.poke();
 
-            sys.puts("received '" + command + "' command with payload '" + payload + "'");
+            var cs = data.indexOf(" ");
 
-            if (command == "nick")
+            if (cs > 0)
             {
-                var nick = payload.replace(/[^\w ]/g, "", "g").substring(0, 32);
+                var command = data.substring(0,cs);
+                var payload = data.substring(cs+1,data.length-2);
 
-                if (nick != "")
+                sys.puts("received '" + command + "' command with payload '" + payload + "'");
+
+                if (command == "nick")
                 {
-                    socket.session.nick = nick;
+                    var nick = payload.replace(/[^\w ]/g, "", "g").substring(0, 32);
+
+                    if (nick != "")
+                    {
+                        socket.session.nick = nick;
+                    }
+
+                    socket.send("nick " + socket.session.nick + "\r\n");
                 }
-
-                socket.send("nick " + socket.session.nick + "\r\n");
-            }
-            else if (command == "protocol")
-            {
-                socket.send("protocol " + PROTOCOL + "\r\n");
-
-                if (payload != PROTOCOL)
+                else if (command == "protocol")
                 {
+                    socket.send("protocol " + PROTOCOL + "\r\n");
+
+                    if (payload != PROTOCOL)
+                    {
+                        socket.session.destroy();
+                        socket.close();
+                    }
+                }
+                else if (command == "play")
+                {
+                    socket.session.opponent = null;
+
+                    for (var id in sessions)
+                    {
+                        if (!sessions.hasOwnProperty(id)) continue;
+                        var asession = sessions[id];
+
+                        if (id == payload)
+                        {
+                            socket.session.opponent = asession;
+                            socket.session.opponent.opponent = socket.session;
+                            break;
+                        }
+                    }
+
+                    if (socket.session.opponent)
+                    {
+                        socket.send("playing " + socket.session.opponent.nick + "\r\n");
+                        socket.session.opponent.socket.send("playing " + socket.session.nick + "\r\n");
+                    }
+                    else
+                    {
+                        socket.send("error opponent '" + payload + "' not found\r\n");
+                    }
+                }
+                else if (command == "send")
+                {
+                    if (socket.session.opponent && socket.session.opponent.socket)
+                    {
+                        // TODO max size of payload here
+                        socket.session.opponent.socket.send("send " + payload + "\r\n");
+                        //socket.send("ok\r\n");
+                    }
+                    else
+                    {
+                        socket.send("error opponent not found\r\n");
+                    }
+                }
+                else if (command == "sync")
+                {
+                    if (socket.session.opponent && socket.session.opponent.socket)
+                    {
+                        // TODO max size of payload here
+                        socket.session.opponent.socket.send("sync " + payload + "\r\n");
+                        //socket.send("ok\r\n");
+                    }
+                    else
+                    {
+                        socket.send("error opponent not found\r\n");
+                    }
+                }
+                else
+                {
+                    socket.send("error opponent not found\r\n");
+                }
+            }
+            else
+            {
+                var command = data.substring(0,data.length-2);
+
+                var mc = command.split(/\r\n/);
+                if (mc.length>1)
+                command = mc[0];
+
+                sys.puts("received '" + command + "' command");
+
+                if (command == "ping")
+                {
+                    socket.send("pong\r\n");
+                }
+                else if (command == "pause")
+                {
+                    if (socket.session.opponent && socket.session.opponent.socket)
+                    {
+                        socket.session.opponent.socket.send("pause\r\n");
+                    }
+                }
+                else if (command == "unpause")
+                {
+                    if (socket.session.opponent && socket.session.opponent.socket)
+                    {
+                        socket.session.opponent.socket.send("unpause\r\n");
+                    }
+                }
+                else if (command == "iwin")
+                {
+                    socket.send("goodbye\r\n");
+
+                    if (socket.session.opponent && socket.session.opponent.socket)
+                    {
+                        socket.session.opponent.socket.send("youlose\r\n");
+                    }
+
                     socket.session.destroy();
                     socket.close();
                 }
-            }
-            else if (command == "play")
-            {
-                socket.session.opponent = null;
-
-                for (var id in sessions)
+                else if (command == "ilose")
                 {
-                    if (!sessions.hasOwnProperty(id)) continue;
-                    var asession = sessions[id];
+                    socket.send("goodbye\r\n");
 
-                    if (id == payload)
+                    if (socket.session.opponent && socket.session.opponent.socket)
                     {
-                        socket.session.opponent = asession;
-                        socket.session.opponent.opponent = socket.session;
-                        break;
+                        socket.session.opponent.socket.send("youwin\r\n");
                     }
-                }
 
-                if (socket.session.opponent)
+                    socket.session.destroy();
+                    socket.close();
+                }
+                else if (command == "quit")
                 {
-                    socket.send("playing " + socket.session.opponent.nick + "\r\n");
-                    socket.session.opponent.socket.send("playing " + socket.session.nick + "\r\n");
+                    socket.send("goodbye\r\n");
+
+                    if (socket.session.opponent && socket.session.opponent.socket)
+                    {
+                        socket.session.opponent.socket.send("youwin\r\n");
+                    }
+
+                    socket.session.destroy();
+                    socket.close();
+                }
+                else if (command == "list")
+                {
+                    var payload = "list ";
+
+                    for (var id in sessions)
+                    {
+                        if (!sessions.hasOwnProperty(id)) continue;
+                        var asession = sessions[id];
+
+                        if (id != socket.session.id && !asession.opponent)
+                        {
+                            payload += asession.id + "=" + asession.nick + "|";
+                        }
+                    }
+
+                    socket.send(payload + "\r\n");
                 }
                 else
                 {
-                    socket.send("error\r\n");
+                    socket.send("error unknown command '" + command + "'\r\n");
                 }
-            }
-            else if (command == "send")
-            {
-                if (socket.session.opponent && socket.session.opponent.socket)
-                {
-                    socket.session.opponent.socket.send("send " + payload + "\r\n");
-                    socket.send("ok\r\n");
-                }
-                else
-                {
-                    socket.send("error\r\n");
-                }
-            }
-            else if (command == "sync")
-            {
-                if (socket.session.opponent && socket.session.opponent.socket)
-                {
-                    socket.session.opponent.socket.send("sync " + payload + "\r\n");
-                    socket.send("ok\r\n");
-                }
-                else
-                {
-                    socket.send("error\r\n");
-                }
-            }
-            else
-            {
-                socket.send("error\r\n");
             }
         }
-        else
+        catch (e)
         {
-            var command = data.substring(0,data.length-2);
-
-            sys.puts("received '" + command + "' command");
-
-            if (command == "ping")
-            {
-                socket.send("pong\r\n");
-            }
-            else if (command == "quit")
-            {
-                socket.send("goodbye\r\n");
-
-                if (socket.session.opponent && socket.session.opponent.socket)
-                {
-                    socket.session.opponent.socket.send("goodbye\r\n");
-                }
-
-                socket.session.destroy();
-                socket.close();
-            }
-            else if (command == "list")
-            {
-                socket.send("list ");
-
-                for (var id in sessions)
-                {
-                    if (!sessions.hasOwnProperty(id)) continue;
-                    var asession = sessions[id];
-
-                    if (id != socket.session.id && !asession.opponent)
-                    {
-                        socket.send(asession.id + "=" + asession.nick + "|");
-                    }
-                }
-
-                socket.send("\r\n");
-            }
-            else
-            {
-                socket.send("error\r\n");
-            }
+            sys.puts("[xultris-server] caught exception: '" + e + "'");
         }
     });
 
