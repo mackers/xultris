@@ -94,7 +94,7 @@ this.dataListener = {
             }
             else if (resp == 'sync')
             {
-                // TODO
+                netPlayer.onSync(payload);
             }
             else if (resp == 'youwin')
             {
@@ -223,6 +223,11 @@ this._sendData = function(data)
 	if (!this.outstream) return;
     dump("sending data to server: '" + data + "'\n");
 	this.outstream.write(data+"\r\n", data.length+2);
+}
+
+this.sync = function(data)
+{
+    netPlayer._sendData("sync " + data);
 }
 
 this.sendProtocol = function()

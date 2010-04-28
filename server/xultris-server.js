@@ -37,6 +37,28 @@ var server = tcp.createServer(function (socket)
 
             destroy: function ()
             {
+                if (!sessions[session.id])
+                    return;
+
+                sys.puts("destroying a session");
+
+                try
+                {
+                    sessions[session.id].socket.close();
+                    sessions[session.id].socket = null;
+                } catch (e) {}
+
+                if (sessions[session.id].opponent)
+                {
+                    try
+                    {
+                        sessions[session.id].opponent.socket.close();
+                        sessions[session.id].opponent.socket = null
+                    } catch (e) {}
+
+                    delete sessions[sessions[session.id].opponent.id];
+                }
+
                 delete sessions[session.id];
             }
         };
@@ -131,7 +153,15 @@ var server = tcp.createServer(function (socket)
                     if (socket.session.opponent && socket.session.opponent.socket)
                     {
                         // TODO max size of payload here
-                        socket.session.opponent.socket.send("sync " + payload + "\r\n");
+                        try
+                        {
+                            socket.session.opponent.socket.send("sync " + payload + "\r\n");
+                        } catch (e)
+                        {
+                            sys.puts("got exception while syncing with opponent, will kill game.");
+                            socket.session.destroy();
+                            socket.session.opponent.destroy();
+                        }
                         //socket.send("ok\r\n");
                     }
                     else

@@ -43,6 +43,10 @@ grid {
 	font-size: xx-small;
 }
 
+#rows2 .on {
+	background-color: grey;
+}
+
 .on {
 	/*background-color: red;*/
 	width: 20px;

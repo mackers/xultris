@@ -480,6 +480,41 @@ function unhalt()
 
 function tick() {
 	fall(1);
+    netsync();
+}
+
+function netsync() {
+    if (!gameison || !netPlayer)
+        return;
+
+    var containsCurpiece = function(x, y)
+    {
+    	for (var i=0 ; i<curpiece.currot.length ; i=i+2)
+        {
+            if (parseInt(curposx)+parseInt(curpiece.currot[i]) == x 
+                && parseInt(curposy)+parseInt(curpiece.currot[i+1]) == y)
+            {
+                return true;
+            }
+        }
+    }
+
+    var data = "";
+
+	for (var i=0 ; i<heightofgrid ; i++)
+    {
+		for (var j=0 ; j<widthofgrid ; j++)
+		{
+            if (grid[j][i] || containsCurpiece(j,i))
+                data += "1";
+            else
+                data += "0";
+        }
+    }
+
+    //dump("sync data looks like: '" + data + "'\r\n");
+
+    netPlayer.sync(data);
 }
 
 function fall(by)
@@ -1111,13 +1146,18 @@ function updateGridBorder()
 
 function showNetPlayDialog()
 {
-	if (gameison && !pauseison)
+	if (gameison && is2player)
 	{
-		pause();
+        // this button becomes "Disconnect"
+        disconnectNetPlayer();
+        return;
 	}
+    else if (gameison && !is2player)
+    {
+		pause();
+    }
 
     readPrefs();
-
 
     document.getElementById("netplay-player-name").value = playerName;
 
@@ -1166,13 +1206,17 @@ function disconnectNetPlayer()
     if (netPlayer)
         netPlayer.disconnect();
 
-	is2player = false;
-	gameison = false;
-	halt();
-    setInfoText("Disconnected D:");
-    setInfoText2("Player 2");
+    if (gameison)
+    {
+        is2player = false;
+        gameison = false;
+        halt();
+        setInfoText("Disconnected");
+        //setInfoText2("Player 2");
+    }
 
     document.getElementById("connected").setAttribute("style","display: none;");
+    document.getElementById("button2player").label = "2 Player";
 
     clearNetPlayDialog();
 }
@@ -1235,6 +1279,7 @@ function netPlayConnect()
         document.getElementById("netplay").collapsed = true;
 
 		document.getElementById("connected").setAttribute("style","display: block;");
+        document.getElementById("button2player").label = "Disconnect";
         setInfoText2(nick);
 
         is2player = true;
@@ -1242,12 +1287,23 @@ function netPlayConnect()
         newGame();
     };
     netPlayer.onReceiveLines = function(numLines) { addJunk(numLines); }
-    netPlayer.onYouWin = function() { disconnectNetPlayer(); gameOverMan(true); }
-    netPlayer.onYouLose = function() { disconnectNetPlayer(); gameOverMan(false); }
+    netPlayer.onYouWin = function() { gameOverMan(true); disconnectNetPlayer();  }
+    netPlayer.onYouLose = function() { gameOverMan(false); disconnectNetPlayer(); }
     netPlayer.onGoodbye = function() { disconnectNetPlayer(); }
     netPlayer.onPause = function() { pause(false, true); }
     netPlayer.onUnpause = function() { pause(true, true); }
-    netPlayer.onSync = function() { /* TODO */ }
+    netPlayer.onSync = function(data) {
+        var x=0;
+       	for (var i=0 ; i<heightofgrid ; i++)
+        {
+            for (var j=0 ; j<widthofgrid ; j++)
+            {
+                var on = (data.charAt(x++)=="1");
+                prepareString = ("p2r" + make2digit(i) + "c" + make2digit(j));
+                document.getElementById(prepareString).setAttribute("class", (on?"on":"off"));
+            }
+        }
+    }
 
     netPlayer.alias = document.getElementById("netplay-player-name").value;
     netPlayer.connectToServerAndListAvailablePlayers();
