@@ -599,6 +599,7 @@ function gameOverMan(youwin)
 		} else {
 			youLose();
 		}
+        disconnectNetPlayer();
 	}
 
 	is2player = false;

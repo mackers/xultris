@@ -37,8 +37,8 @@
   - ***** END LICENSE BLOCK ***** -->
 
 
-<?xml-stylesheet href="xultris.css" type="text/css"?>
-
+<?xml-stylesheet href="xultris.css" type="text/css" media="all"?>
+<?xml-stylesheet href="xultris-portrait.css" type="text/css" media="all and (orientation:portrait)"?>
 
 <!DOCTYPE window SYSTEM "chrome://xultris/locale/xultris.ent">
 
@@ -376,7 +376,7 @@
 
             </vbox>
             <spring flex="1"/>
-            <stack>
+            <stack id="player2side">
                 <box orient="horizontal">
                     <grid id="player2">
                        <columns id="columns2">
@@ -609,4 +609,6 @@
         </vbox>
 
     </stack>
+
+    <button id="dummy-button"/>
 </window>
