@@ -615,5 +615,5 @@
             <label id="netplay-status" value=""/>
         </vbox>
 
-     </stack>
+    </stack>
 </window>

@@ -187,3 +187,9 @@ grid {
     margin: 2em 3em;
     -moz-border-radius: 1em/5em;
 }
+
+.mobile button.dialog
+{
+    font-size: x-small;
+}
+
