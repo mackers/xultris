@@ -37,9 +37,6 @@
   - ***** END LICENSE BLOCK ***** -->
 
 
-<?xml-stylesheet href="chrome://browser/skin/platform.css" type="text/css"?>
-<?xml-stylesheet href="chrome://browser/skin/browser.css" type="text/css"?>
-<?xml-stylesheet href="chrome://browser/content/browser.css" type="text/css"?>
 <?xml-stylesheet href="xultris.css" type="text/css"?>
 
 
@@ -304,7 +301,7 @@
                 <vbox id="infotextbox"><hbox><text id="infotext" value="&ui.hitntobegin;"/></hbox></vbox>
             </stack>
             <vbox id="righttext">
-                <image src="chrome://xultris/content/xultris.gif"/>
+                <image src="chrome://xultris/content/images/xultris.gif"/>
                 <hbox class="title" pack="center">
                     <text id="version" value="v&package.version;"/>
                 </hbox>
@@ -360,20 +357,12 @@
                     </grid>
                 </hbox>
                 <spring flex="1"/>
-                <vbox id="buttoncontainer" flex="1">
-                <hbox pack="center">
-                    <button class="dialog" id="button1player" label="&ui.newgame;" observes="UI:1player"/>
-                </hbox>
-                <hbox collapsed="true">
-                    <button class="dialog" id="buttonOptions" label="&ui.1Poptions;" observes="UI:1Poptions"/>
-                </hbox>
-                <hbox pack="center">
-                    <button class="dialog" id="button2player" label="&ui.2player;" observes="UI:2player"/>
-                </hbox>
-                <hbox pack="center">
-                    <button class="dialog" id="pauseButton" label="&ui.pause;" observes="UI:pause"/>
-                </hbox>
+                <vbox id="buttoncontainer" flex="1" align="center">
+                    <toolbarbutton id="button1player" observes="UI:1player"/>
+                    <toolbarbutton id="button2player" observes="UI:2player" class="disconnected"/>
+                    <toolbarbutton id="pauseButton" observes="UI:pause"/>
                 </vbox>
+
 
     <!--
     removed until the scoring algorithm settles

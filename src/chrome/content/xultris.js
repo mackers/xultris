@@ -245,6 +245,8 @@ function startup()
 	netPlayer.init();
 
 	version = document.getElementById("version").getAttribute("value");
+
+    ensureGameHasFocus();
 }
 
 function readPrefs()
@@ -342,7 +344,7 @@ function newGame(inlevel, injunk)
 
 function ensureGameHasFocus()
 {
-    var buttons = document.getElementsByTagName("button");
+    var buttons = document.getElementsByTagName("toolbarbutton");
 
     for (var i=0; i<buttons.length; i++)
     {
@@ -1252,7 +1254,7 @@ function disconnectNetPlayer()
     }
 
     document.getElementById("connected").setAttribute("style","display: none;");
-    document.getElementById("button2player").label = "2 Player";
+    document.getElementById("button2player").setAttribute("class", "disconnected");
 
     clearNetPlayDialog();
 }
@@ -1315,7 +1317,7 @@ function netPlayConnect()
         document.getElementById("netplay").collapsed = true;
 
 		document.getElementById("connected").setAttribute("style","display: block;");
-        document.getElementById("button2player").label = "Disconnect";
+        document.getElementById("button2player").setAttribute("class", "connected");
         setInfoText2(nick);
 
         is2player = true;

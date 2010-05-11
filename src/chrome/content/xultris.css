@@ -115,7 +115,7 @@ grid {
 }
 
 .bgimage {
-	background-image: url("xultris.gif");
+	background-image: url("images/xultris.gif");
 }
 
 .nobgimage {
@@ -182,14 +182,29 @@ grid {
 	display: none;
 }
 
-#buttoncontainer {
-    background-color: ButtonFace;
-    margin: 2em 3em;
-    -moz-border-radius: 1em/5em;
+#buttoncontainer toolbarbutton
+{
+    padding: 0;
+    margin: 0;
 }
 
-.mobile button.dialog
+#button1player
 {
-    font-size: x-small;
+    list-style-image: url("chrome://xultris/content/images/newgame.png");
+}
+
+#button2player.disconnected
+{
+    list-style-image: url("chrome://xultris/content/images/2player.png");
+}
+
+#button2player.connected
+{
+    list-style-image: url("chrome://xultris/content/images/disconnect.png");
+}
+
+#pauseButton
+{
+    list-style-image: url("chrome://xultris/content/images/pause.png");
 }
 
