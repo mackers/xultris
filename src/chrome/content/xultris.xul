@@ -1,34 +1,40 @@
 <?xml version="1.0"?> 
 
-<!--
-   - The contents of this file are subject to the Netscape Public
-   - License Version 1.1 (the "License"); you may not use this file
-   - except in compliance with the License. You may obtain a copy of
-   - the License at http://www.mozilla.org/NPL/
-   -  
-   - Software distributed under the License is distributed on an "AS
-   - IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-   - implied. See the License for the specific language governing
-   - rights and limitations under the License.
-   -  
-   - The Original Code is Mozilla Communicator client code, released
-   - March 31, 1998.
-   - 
-   - The Initial Developer of the Original Code is Netscape
-   - Communications Corporation. Portions created by Netscape are
-   - Copyright (C) 1999 Netscape Communications Corporation. All
-   - Rights Reserved.
-   - 
-   - Contributor(s):
-   -    David McNamara
-   -	David Gillen
-   -    Mike Schuette
-  -->
-
-<!--
-   - Xultris
-   - Version 3.0
-  -->
+<!-- ***** BEGIN LICENSE BLOCK *****
+  -   Version: MPL 1.1/GPL 2.0/LGPL 2.1
+  -
+  - The contents of this file are subject to the Mozilla Public License Version
+  - 1.1 (the "License"); you may not use this file except in compliance with
+  - the License. You may obtain a copy of the License at
+  - http://www.mozilla.org/MPL/
+  - 
+  - Software distributed under the License is distributed on an "AS IS" basis,
+  - WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+  - for the specific language governing rights and limitations under the
+  - License.
+  -
+  - The Original Code is briks.
+  -
+  - Portions created by the Initial Developer are Copyright (C) 2008
+  - the Initial Developer. All Rights Reserved.
+  -
+  - Contributor(s): David McNamara
+  -                 David Gillen
+  -                 Mike Schuette
+  -
+  - Alternatively, the contents of this file may be used under the terms of
+  - either the GNU General Public License Version 2 or later (the "GPL"), or
+  - the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+  - in which case the provisions of the GPL or the LGPL are applicable instead
+  - of those above. If you wish to allow use of your version of this file only
+  - under the terms of either the GPL or the LGPL, and not to allow others to
+  - use your version of this file under the terms of the MPL, indicate your
+  - decision by deleting the provisions above and replace them with the notice
+  - and other provisions required by the GPL or the LGPL. If you do not delete
+  - the provisions above, a recipient may use your version of this file under
+  - the terms of any one of the MPL, the GPL or the LGPL.
+  - 
+  - ***** END LICENSE BLOCK ***** -->
 
 <?xml-stylesheet href="xultris.css" type="text/css"?>
 <!-- <?xml-stylesheet href="xultris-button.css" type="text/css"?> -->
@@ -62,6 +68,7 @@
 		<key id="key2player" key="2" command="UI:2player"/>
 		<key id="killgame" key="&key.killgame;" command="UI:killgame"/>
 		<key id="options" key="&key.options;" command="UI:1Poptions"/>
+		<key id="cancel" keycode="VK_ESCAPE" command="UI:CancelDialog"/>
 	</keyset>
 
 	<broadcasterset id="broadcasterset">
@@ -77,6 +84,7 @@
 		<broadcaster id="UI:1Poptions" value="&ui.1Poptions;" oncommand="unfocus();showOptionsWindow();unfocus();"/>
 		<broadcaster id="UI:highscores" value="&ui.highscores;" oncommand="openHighScores();unfocus();"/>
 		<broadcaster id="UI:instructions" value="&ui.instructions;" oncommand="unfocus();showInstructionsWindow();unfocus();"/>
+		<broadcaster id="UI:CancelDialog" value="" oncommand="cancelDialog();"/>
 	</broadcasterset>
 
     <stack>
@@ -591,7 +599,10 @@
         <vbox id="netplay" collapsed="true" style="background-color: black; border: 2px solid yellow; color: yellow; margin: 40px 100px; padding: 10px;">
             <hbox flex="1" align="center">
                 <label value="&netplay.yourplayername.label;"/>
-                <textbox id="netplay-player-name" oninput="invalidateNetPlayConnectButton();" oncommand="netPlayConnect();" maxlength="12"/>
+                <textbox id="netplay-player-name" oninput="invalidateNetPlayConnectButton();" oncommand="netPlayConnect();" maxlength="12"
+                    onkeypress="if ((event.keyCode == KeyEvent.DOM_VK_RETURN) ||
+                    (event.keyCode == KeyEvent.DOM_VK_ENTER)) netPlayConnect();"
+                />
                 <button id="netplay-connect-button" label="&netplay.connect.label;" disabled="true" onclick="netPlayConnect();"/>
             </hbox>
             <hbox style="margin: 20px 35px;" flex="1">
