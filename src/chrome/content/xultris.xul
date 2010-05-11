@@ -607,4 +607,6 @@
         </vbox>
 
     </stack>
+
+    <button id="dummy-button"/>
 </window>

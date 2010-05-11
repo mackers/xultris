@@ -185,6 +185,7 @@ grid {
 #buttoncontainer toolbarbutton
 {
     padding: 0;
+    padding-left: 10px;
     margin: 0;
 }
 
@@ -208,3 +209,7 @@ grid {
     list-style-image: url("chrome://xultris/content/images/pause.png");
 }
 
+#dummy-button
+{
+    visibility: hidden ;
+}

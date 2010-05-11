@@ -344,14 +344,11 @@ function newGame(inlevel, injunk)
 
 function ensureGameHasFocus()
 {
-    var buttons = document.getElementsByTagName("toolbarbutton");
-
-    for (var i=0; i<buttons.length; i++)
-    {
-        buttons[i].blur();
-    }
-
+    document.getElementById("dummy-button").focus();
+    document.getElementById("dummy-button").blur();
     window.focus();
+
+    dump("game should have focus\r\n");
 }
 
 function isMobile()
