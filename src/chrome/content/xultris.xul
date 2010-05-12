@@ -48,6 +48,8 @@
 	orient="vertical"
 	align="center"
 	onload="startup()"
+    width="800"
+    height="480"
     class="desktop">
 
 	<script language="javascript" src="xultris.js"/>

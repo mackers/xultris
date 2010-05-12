@@ -232,15 +232,6 @@ function startup()
 	}
 	drawPreview(fullpiece, pieceoffclass);
 
-	// hide the options button if playing over web
-	// (open dialog not allowed)
-    /*
-	if (new String(window.location).indexOf("http") == 0)
-	{
-	  document.getElementById("buttonOptions").setAttribute("style","display: none;");
-	}
-    */
-
 	netPlayer = new NetPlayer();
 	netPlayer.init();
 
@@ -262,6 +253,9 @@ function readPrefs()
         startlevel = prefs.getIntPref("start-level");
         junklevel = prefs.getIntPref("junk");
         playerName = prefs.getCharPref("player-name");
+
+        if (netPlayer)
+            netPlayer.netHost = prefs.getCharPref("nethost");
     }
     catch (e) {}
 
@@ -377,33 +371,6 @@ function newOPGame() //new one-player game
 	//newGame(startlevel, junklevel);
 	//junk code not implemented yet.
 }
-
-/*
-function startNewTPGame() //new 2-player game
-{
-	if (gameison && !pauseison)
-	{
-		pause();
-	}
-
-
-	unfocus();openDialog('2player.xul','blank','chrome,modal',netPlayer);unfocus();
-
-	netPlayer.win = window;
-
-	if (netPlayer && netPlayer.isConnected())
-	{
-		document.getElementById("connected").setAttribute("style","display: block;");
-		is2player = true;
-        readPrefs();
-		newGame(startlevel, 0);
-	}
-	else if (pauseison)
-	{
-		pause();
-	}
-}
-*/
 
 function tpDialogStartup()
 {
@@ -1016,170 +983,6 @@ function showInstructionsWindow()
 
 }
 
-/*
-function showOptionsWindow()
-{
-	if (gameison && !pauseison)
-	{
-		pause();
-	}
-	//gotta stuff variables into an object & pass it to the window due to scope
-	var theOptions = new Options();
-	openDialog('options.xul','options','chrome,modal', theOptions);
-	//after the window has closed, set the game settings to the modified theOptions object properties
-	startlevel = theOptions.lev;
-	junklevel = theOptions.junk;
-	fastfall = theOptions.fall;
-	bgimage = theOptions.bgimage;
-	gridborder = theOptions.gridborder;
-	
-	delete theOptions;  //just in case ...
-
-	if (bgimage == "true")
-	{
-		document.getElementById("maingrid").setAttribute("class", "bgimage");
-	} else {
-		document.getElementById("maingrid").setAttribute("class", "nobgimage");
-	}
-
-	var gridclass;
-	if (gridborder == "true") {
-		gridclass = "greyborder";
-		pieceoffclass = "off";
-	} else {
-		gridclass = "noborder";
-		pieceoffclass = "offnoborder";
-	}
-	
-	var mypiece;
-
-	for (var i=0 ; i<widthofgrid ; i++)
-	{
-		for (var j=0 ; j<heightofgrid ; j++)
-		{
-			var prepareString = ("r" + make2digit(parseInt(j)) + "c" + make2digit(parseInt(i)));
-			mypiece = document.getElementById(prepareString).getAttribute("class");
-			if (mypiece != "on") {
-				document.getElementById(prepareString).setAttribute("class",gridclass);
-			}
-		}
-	}
-
-	//for (i=0 ; i<4 ; i++)
-	//{
-    //	for (j=0 ; j<4 ; j++)
-	//	{
-	//		prepareString = ("pr" + make2digit(parseInt(j)) + "c" + make2digit(parseInt(i)));
-	//		mypiece = document.getElementById(prepareString).getAttribute("class");
-	//		if (mypiece != "on") {
-	//			document.getElementById(prepareString).setAttribute("style","border-style: none;");
-	//		}
-	//	}
-	//}
-
-	drawPreview(fullpiece,pieceoffclass);
-	drawPreview(nextpiece,"on");
-
-	if (pauseison)
-	{
-		pause();
-	}
-
-	//redraw();	
-}
-
-function initOptionsWindow()
-{
-	var localoptions = window.arguments[0];
-
-	if (localoptions.fall == "true")
-	{
-		document.getElementById("radioFallStyle").selectedIndex = 0;
-	} else {
-		document.getElementById("radioFallStyle").selectedIndex = 1;
-	}
-
-	if (localoptions.bgimage == "false")
-	{
-		document.getElementById("radioBGImage").selectedIndex = 0;
-	} else {
-		document.getElementById("radioBGImage").selectedIndex = 1;
-	}
-
-	if (localoptions.gridborder == "false")
-	{
-		document.getElementById("radioGridBorder").selectedIndex = 0;
-	} else {
-		document.getElementById("radioGridBorder").selectedIndex = 1;
-	}
-
-	document.getElementById("startlevel").selectedIndex = localoptions.lev-1;
-	document.getElementById("junk").selectedIndex = localoptions.junk;
-
-	//document.getElementById("scrollStartLevel").setAttribute("curpos", " " + Math.abs(localoptions.lev - 10));
-	//document.getElementById("scrollJunkLevel").setAttribute("curpos", " " + Math.abs(localoptions.junk - 5));
-	//document.getElementById("textStartLevel").setAttribute("value", " " + localoptions.lev);
-	//document.getElementById("textJunkLevel").setAttribute("value", " " + localoptions.junk);
-
-	document.getElementById('cancelButton').focus();	
-}
-
-function closeOptionsWindow()
-{
-	//why it is necessary to do this again, I'm not sure, but it is.
-	var localoptions = window.arguments[0];
-	//localoptions.lev = (9 - (document.getElementById("scrollStartLevel").getAttribute("curpos")) + 1);
-	//localoptions.junk = (5 - (document.getElementById("scrollJunkLevel").getAttribute("curpos")));
-	localoptions.lev = document.getElementById("startlevel").selectedIndex + 1;
-	localoptions.junk = document.getElementById("junk").selectedIndex;
-	localoptions.fall = document.getElementById("radioFallStyle").getAttribute("value");
-
-	window.close();
-}
-
-function Options () {
-	this.lev = startlevel;
-	this.junk = junklevel;
-	this.fall = fastfall;
-	this.bgimage = bgimage;
-	this.gridborder = gridborder;
-}
-
-function updateStartLevel()
-{
-	var localoptions = window.arguments[0];	
-
-	localoptions.lev = (9 - (document.getElementById("scrollStartLevel").getAttribute("curpos")) + 1);
-	document.getElementById("textStartLevel").setAttribute("value", " " + localoptions.lev);
-}
-
-function updateJunkLevel()
-{
-	var localoptions = window.arguments[0];
-
-	localoptions.junk = (5 - (document.getElementById("scrollJunkLevel").getAttribute("curpos")));
-	document.getElementById("textJunkLevel").setAttribute("value", " " + localoptions.junk);
-}
-
-function updateFallStyle()
-{
-	var localoptions = window.arguments[0];
-	localoptions.fall = (document.getElementById("radioFallStyle").getAttribute("value"));
-}
-
-function updateBGImage()
-{
-	var localoptions = window.arguments[0];
-	localoptions.bgimage = (document.getElementById("radioBGImage").getAttribute("value"));
-}
-
-function updateGridBorder()
-{
-	var localoptions = window.arguments[0];
-	localoptions.gridborder = (document.getElementById("radioGridBorder").getAttribute("value"));
-}
-*/
-
 function showNetPlayDialog()
 {
 	if (gameison && is2player)
@@ -1272,11 +1075,11 @@ function netPlayConnect()
     netPlayer.onOtherPlayerQuit = function() {}
     netPlayer.disconnect();
 
-    netPlayer.onProtocolMismatch = function() { sl.value = "Error establishing a communication with the server."; disconnectNetPlayer(); }
-    netPlayer.onCannotConnectToServer = function(e) { sl.value = "Cannot connect to the Xultris server: " + e; disconnectNetPlayer(); }
-    netPlayer.onOtherPlayerQuit = function() { sl.value = "Not connected."; disconnectNetPlayer(); }
+    netPlayer.onProtocolMismatch = function() { disconnectNetPlayer(); sl.value = "Error establishing a communication with the server."; }
+    netPlayer.onCannotConnectToServer = function() { disconnectNetPlayer(); sl.value = "Cannot connect to the Xultris server"; }
+    netPlayer.onOtherPlayerQuit = function() { disconnectNetPlayer(); sl.value = "Not connected."; }
     netPlayer.onChangeNick = function(nick) { document.getElementById("netplay-player-name").value = nick; }
-    netPlayer.onGeneralError = function() { sl.value = "There was an unexpected error; disconnecting."; clearNetPlayDialog(); disconnectNetPlayer(); }
+    netPlayer.onGeneralError = function() { clearNetPlayDialog(); disconnectNetPlayer(); sl.value = "There was an unexpected error; disconnecting."; }
     netPlayer.onListAvailablePlayers = function(players)
     {
         var lb = document.getElementById("netplay-list");

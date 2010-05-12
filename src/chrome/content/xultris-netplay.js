@@ -36,317 +36,252 @@
 
 function NetPlayer()
 {
+    this.netHost = ""; // read from pref;
+    this.netPort = 7000;
+    this.protocol = "2.0";
 
-this.netHost = "chimborazo.33eels.com";
-this.netPort = 7000;
-this.protocol = "2.0";
+    this.connected = false;
+    this.handshake = false;
 
-this.connected = false;
-//this.waiting = false;
-//this.serverSocket = null;
+    this.alias = "";
 
-this.alias = "";
+    this.instream = null;
+    this.outstream = null;
 
-this.instream = null;
-this.outstream = null;
-
-this.dataListener = {
-	onStartRequest: function(request, context) {},
-	onStopRequest: function(request, context, status)
-	{
-        try
+    this.dataListener = {
+        onStartRequest: function(request, context) {},
+        onStopRequest: function(request, context, status)
         {
-            netPlayer.onOtherPlayerQuit();
-        } catch (e) {}
-        // TODO
-		//netPlayer.disconnect();
-	},
-	onDataAvailable: function(request, context, inputStream, offset, count)
-	{
-		if (!netPlayer) return;
-
-        var handleResponse = function(data)
-        {
-            if (!data)
-                return;
-
-            var space = data.indexOf(" ");
-            var resp, payload;
-
-            if (space == -1)
+            try
             {
-                resp = data.trim();
-                payload = "";
-            }
-            else
-            {
-                resp = data.substring(0, space).trim();
-                payload = data.substring(space+1).trim();
-            }
-
-            dump("server sent response '" + resp + "' with payload '" + payload + "'\n"); 
-            
-            if (resp == 'protocol')
-            {
-                if (payload != netPlayer.protocol)
-                    return netPlayer.onProtocolMismatch();
-
-                netPlayer.changeNick(netPlayer.alias);
-            }
-            else if (resp == 'nick')
-            {
-                netPlayer.onChangeNick(payload);
-
-                netPlayer.listAvailablePlayers();
-            }
-            else if (resp == 'list')
-            {  
-                if (payload == '')
-                    netPlayer.onListAvailablePlayers(null);
-
-                // payload looks like: list 1946=ook ook|
-                var bits = payload.split("|");
-                var players = [];
-
-                for (var i=0; i<bits.length; i++)
+                if (netPlayer.handshake)
                 {
-                    var bits2 = bits[i].split("=");
-                    if (bits2[1])
-                        players.push({id: bits2[0], name: bits2[1]});
+                    netPlayer.onOtherPlayerQuit();
+                }
+                else
+                {
+                    netPlayer.onCannotConnectToServer();
+                }
+                
+            } catch (e) { dump(e + "\n"); }
+        },
+        onDataAvailable: function(request, context, inputStream, offset, count)
+        {
+            if (!netPlayer) return;
+
+            var handleResponse = function(data)
+            {
+                if (!data)
+                    return;
+
+                var space = data.indexOf(" ");
+                var resp, payload;
+
+                if (space == -1)
+                {
+                    resp = data.trim();
+                    payload = "";
+                }
+                else
+                {
+                    resp = data.substring(0, space).trim();
+                    payload = data.substring(space+1).trim();
                 }
 
-                if (players != null && players.length == 0)
-                    players = null;
+                dump("server sent response '" + resp + "' with payload '" + payload + "'\n"); 
+                
+                if (resp == 'protocol')
+                {
+                    if (payload != netPlayer.protocol)
+                        return netPlayer.onProtocolMismatch();
 
-                netPlayer.onListAvailablePlayers(players);
-            }
-            else if (resp == 'playing')
-            {
-                netPlayer.onStartPlaying(payload);
-            }
-            else if (resp == 'send')
-            {
-                netPlayer.onReceiveLines(parseInt(payload));
-            }
-            else if (resp == 'sync')
-            {
-                netPlayer.onSync(payload);
-            }
-            else if (resp == 'youwin')
-            {
-                netPlayer.onYouWin();
-            }
-            else if (resp == 'youlose')
-            {
-                netPlayer.onYouLose();
-            }
-            else if (resp == 'pause')
-            {
-                netPlayer.onPause();
-            }
-            else if (resp == 'unpause')
-            {
-                netPlayer.onUnpause();
-            }
-            else if (resp == 'goodbye')
-            {
-                netPlayer.onGoodbye();
-            }
-            else
-            {
-                //return netPlayer.onGeneralError();
-            }
-        };
+                    netPlayer.handshake = true;
+                    netPlayer.changeNick(netPlayer.alias);
+                }
+                else if (resp == 'nick')
+                {
+                    netPlayer.onChangeNick(payload);
 
-		var rawdata = netPlayer.instream.read(count);
-        var bits = rawdata.split(/\r\n/);
+                    netPlayer.listAvailablePlayers();
+                }
+                else if (resp == 'list')
+                {  
+                    if (payload == '')
+                        netPlayer.onListAvailablePlayers(null);
 
-        for (var i=0; i<bits.length; i++)
-            handleResponse(bits[i]);
-	}
-};
+                    // payload looks like: list 1946=ook ook|
+                    var bits = payload.split("|");
+                    var players = [];
 
-/*
-this.listener =
-{
-	onSocketAccepted : function(socket, transport)
-	{
-		var stream;
+                    for (var i=0; i<bits.length; i++)
+                    {
+                        var bits2 = bits[i].split("=");
+                        if (bits2[1])
+                            players.push({id: bits2[0], name: bits2[1]});
+                    }
 
-		try
-		{
-			netPlayer.outstream = transport.openOutputStream(0,0,0);
+                    if (players != null && players.length == 0)
+                        players = null;
 
-			stream = transport.openInputStream(0,0,0);
-			netPlayer.instream = Components.classes["@mozilla.org/scriptableinputstream;1"].createInstance(Components.interfaces.nsIScriptableInputStream)
-			netPlayer.instream.init(stream);
-		
-			netPlayer.serverSocket.close();
+                    netPlayer.onListAvailablePlayers(players);
+                }
+                else if (resp == 'playing')
+                {
+                    netPlayer.onStartPlaying(payload);
+                }
+                else if (resp == 'send')
+                {
+                    netPlayer.onReceiveLines(parseInt(payload));
+                }
+                else if (resp == 'sync')
+                {
+                    netPlayer.onSync(payload);
+                }
+                else if (resp == 'youwin')
+                {
+                    netPlayer.onYouWin();
+                }
+                else if (resp == 'youlose')
+                {
+                    netPlayer.onYouLose();
+                }
+                else if (resp == 'pause')
+                {
+                    netPlayer.onPause();
+                }
+                else if (resp == 'unpause')
+                {
+                    netPlayer.onUnpause();
+                }
+                else if (resp == 'goodbye')
+                {
+                    netPlayer.onGoodbye();
+                }
+                else
+                {
+                    //return netPlayer.onGeneralError();
+                }
+            };
 
-            netPlayer.sendProtocol();
-		}
-		catch
-		{ 
-			netPlayer.win.alert(e);
-		}
+            var rawdata = netPlayer.instream.read(count);
+            var bits = rawdata.split(/\r\n/);
 
-		var pump = Components. classes["@mozilla.org/network/input-stream-pump;1"].createInstance(Components.interfaces.nsIInputStreamPump);
-		pump.init(stream, -1, -1, 0, 0, false);
-		pump.asyncRead(netPlayer.dataListener,netPlayer);
-	},
-	onStopListening : function(socket, status) {}
-};
-*/
+            for (var i=0; i<bits.length; i++)
+                handleResponse(bits[i]);
+        }
+    };
 
-this.init = function()
-{
-	this.connected = false;
-}
+    this.init = function()
+    {
+        this.connected = false;
+        this.handshake = false;
+    }
 
-this.isConnected = function()
-{
-	return this.connected;
-}
+    this.isConnected = function()
+    {
+        return this.connected;
+    }
 
-/*
-this.isWaiting = function()
-{
-	return this.waiting;
-}
-*/
+    this.connectToServerAndListAvailablePlayers = function()
+    {
+        try
+        {
+            var transportService = Components.classes["@mozilla.org/network/socket-transport-service;1"].getService(Components.interfaces.nsISocketTransportService);
+            var transport = transportService.createTransport(null,0,this.netHost,this.netPort,null);
 
-this.connectToServerAndListAvailablePlayers = function()
-{
-	try
-	{
-		var transportService = Components.classes["@mozilla.org/network/socket-transport-service;1"].getService(Components.interfaces.nsISocketTransportService);
-		var transport = transportService.createTransport(null,0,this.netHost,this.netPort,null);
+            this.outstream = transport.openOutputStream(0,0,0);
 
-		this.outstream = transport.openOutputStream(0,0,0);
+            var stream = transport.openInputStream(0,0,0);
+            this.instream = Components.classes["@mozilla.org/scriptableinputstream;1"].createInstance(Components.interfaces.nsIScriptableInputStream);
+            this.instream.init(stream);
 
-		var stream = transport.openInputStream(0,0,0);
-		this.instream = Components.classes["@mozilla.org/scriptableinputstream;1"].createInstance(Components.interfaces.nsIScriptableInputStream);
-		this.instream.init(stream);
+            var pump = Components.classes["@mozilla.org/network/input-stream-pump;1"].createInstance(Components.interfaces.nsIInputStreamPump);
+            pump.init(stream, -1, -1, 0, 0, false);
+            pump.asyncRead(this.dataListener,netPlayer);
 
-		var pump = Components.classes["@mozilla.org/network/input-stream-pump;1"].createInstance(Components.interfaces.nsIInputStreamPump);
-		pump.init(stream, -1, -1, 0, 0, false);
-		pump.asyncRead(this.dataListener,netPlayer);
+            setTimeout(netPlayer.sendProtocol, 200);
+            netPlayer.connected = true;
+        }
+        catch (e)
+        {
+            netPlayer.onCannotConnectToServer(e);
+        }	
+    }
 
-        setTimeout(netPlayer.sendProtocol, 200);
-        netPlayer.connected = true;
-	}
-	catch (e)
-	{
-        netPlayer.onCannotConnectToServer(e);
-	}	
-}
+    this.disconnect = function()
+    {
+        this.connected = false;
+        this.handshake = false;
 
-this.disconnect = function()
-{
-	this.connected = false;
+        if (this.outstream) this._sendData("quit");
 
-	if (this.outstream) this._sendData("quit");
+        if (this.outstream) this.outstream.close();
+        if (this.instream) this.instream.close();
 
-	if (this.outstream) this.outstream.close();
-	if (this.instream) this.instream.close();
+        this.outstream = null;
+        this.instream = null;
+    }
 
-    this.outstream = null;
-    this.instream = null;
-}
+    this._sendData = function(data)
+    {
+        if (!this.outstream) return;
+        dump("sending data to server: '" + data + "'\n");
 
-this._sendData = function(data)
-{
-	if (!this.outstream) return;
-    dump("sending data to server: '" + data + "'\n");
-	this.outstream.write(data+"\r\n", data.length+2);
-}
+        try
+        {
+            this.outstream.write(data+"\r\n", data.length+2);
+        }
+        catch (e) {}
+    }
 
-this.sync = function(data)
-{
-    netPlayer._sendData("sync " + data);
-}
+    this.sync = function(data)
+    {
+        netPlayer._sendData("sync " + data);
+    }
 
-this.sendProtocol = function()
-{
-    netPlayer._sendData("protocol " + netPlayer.protocol);
-}
+    this.sendProtocol = function()
+    {
+        netPlayer._sendData("protocol " + netPlayer.protocol);
+    }
 
-this.changeNick = function(nick)
-{
-    netPlayer._sendData("nick " + nick);
-}
+    this.changeNick = function(nick)
+    {
+        netPlayer._sendData("nick " + nick);
+    }
 
-this.listAvailablePlayers = function()
-{
-    netPlayer._sendData("list");
-}
+    this.listAvailablePlayers = function()
+    {
+        netPlayer._sendData("list");
+    }
 
-this.choosePlayer = function(playerId)
-{
-    netPlayer._sendData("play " + playerId);
-}
+    this.choosePlayer = function(playerId)
+    {
+        netPlayer._sendData("play " + playerId);
+    }
 
-this.pushLines = function(numLines)
-{
-	netPlayer._sendData("send " + numLines);
-}
+    this.pushLines = function(numLines)
+    {
+        netPlayer._sendData("send " + numLines);
+    }
 
-this.pushPause = function()
-{
-	netPlayer._sendData("pause");
-}
+    this.pushPause = function()
+    {
+        netPlayer._sendData("pause");
+    }
 
-this.pushUnpause = function()
-{
-	netPlayer._sendData("unpause");
-}
+    this.pushUnpause = function()
+    {
+        netPlayer._sendData("unpause");
+    }
 
-this.pushWin = function()
-{
-	netPlayer._sendData("iwin");
-}
+    this.pushWin = function()
+    {
+        netPlayer._sendData("iwin");
+    }
 
-this.pushLose = function()
-{
-	netPlayer._sendData("ilose");
-}
-
-
-/*
-this.startServer = function()
-{
-	this.waiting = true;
-	this.connected = false;
-
-	try
-	{
-		this.serverSocket = Components.classes["@mozilla.org/network/server-socket;1"].createInstance(Components.interfaces.nsIServerSocket);
-		this.serverSocket.init(this.netPort,false,-1);
-
-		this.serverSocket.asyncListen(this.listener);
-
-		return true;
-	}
-	catch (e)
-	{
-		this.waiting = false;
-		return false;
-	}
-}
-
-this.startHandshake = function()
-{
-	this.writeMessage("HELO " + version);
-}
-
-this.doneHandshake = function()
-{
-	this.connected = true;
-	this.waiting = false;
-
-	this.win.close();
-}
-*/
-
+    this.pushLose = function()
+    {
+        netPlayer._sendData("ilose");
+    }
 }
 
