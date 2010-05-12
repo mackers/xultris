@@ -1,6 +1,4 @@
-<?xml version="1.0"?>
-
-<!-- ***** BEGIN LICENSE BLOCK *****
+/* ***** BEGIN LICENSE BLOCK *****
   -   Version: MPL 1.1/GPL 2.0/LGPL 2.1
   -
   - The contents of this file are subject to the Mozilla Public License Version
@@ -34,32 +32,14 @@
   - the provisions above, a recipient may use your version of this file under
   - the terms of any one of the MPL, the GPL or the LGPL.
   - 
-  - ***** END LICENSE BLOCK ***** -->
+  - ***** END LICENSE BLOCK ***** */
 
-<?xml-stylesheet href="chrome://xultris/content/xultris-toolbar-button.css" type="text/css"?>
+#extensions-xultris-button {
+  list-style-image: url("chrome://xultris/content/images/icon24.png");
+}
 
-<overlay id="menuoverlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+toolbar[iconsize="small"] #extensions-xultris-button {
+  list-style-image: url("chrome://xultris/content/images/icon16.png");
+}
 
-<script src="chrome://xultris/content/xultris-overlay.js"/>
 
-<!-- Firefox -->
-<menupopup id="menu_ToolsPopup">
-	<menuitem id="xultris-menuitem"
-		oncommand="toOpenWindowByType('xultris-main','chrome://xultris/content/');"
-		label="Xultris"
-		accesskey="x"
-		href="chrome://xultris/content/"
-		class="menuitem-iconic"/>
-</menupopup>
-
-<!--
-<toolbarpalette id="BrowserToolbarPalette">
-      <toolbarbutton id="extensions-xultris-button"
-                     class="toolbarbutton-1 xultris-button"
-                     oncommand="toOpenWindowByType('xultris-main','chrome://xultris/content/');"
-                     tooltiptext="Xultris"
-                     label="Xultris" />
-</toolbarpalette>
--->
-
-</overlay>
