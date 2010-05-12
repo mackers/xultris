@@ -88,7 +88,7 @@ function NetPlayer()
                     payload = data.substring(space+1).trim();
                 }
 
-                dump("server sent response '" + resp + "' with payload '" + payload + "'\n"); 
+                //dump("server sent response '" + resp + "' with payload '" + payload + "'\n"); 
                 
                 if (resp == 'protocol')
                 {
@@ -225,7 +225,7 @@ function NetPlayer()
     this._sendData = function(data)
     {
         if (!this.outstream) return;
-        dump("sending data to server: '" + data + "'\n");
+        //dump("sending data to server: '" + data + "'\n");
 
         try
         {

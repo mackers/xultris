@@ -325,10 +325,10 @@
                 </hbox>
                 <spring flex="1"/>
                 <vbox id="buttoncontainer" flex="1" align="center">
-                    <toolbarbutton id="button1player" observes="UI:1player"/>
-                    <toolbarbutton id="button2player" observes="UI:2player" class="disconnected"/>
-                    <toolbarbutton id="pauseButton" observes="UI:pause"/>
-                </vbox>
+                    <toolbarbutton id="button1player" oncommand="newOPGame();unfocus();"/>
+                    <toolbarbutton id="button2player" oncommand="showNetPlayDialog();" class="disconnected"/>
+                    <toolbarbutton id="pauseButton" oncommand="pause();unfocus();"/>
+                 </vbox>
 
 
     <!--
@@ -575,7 +575,7 @@
             <label id="netplay-status" value=""/>
         </vbox>
 
-    </stack>
+        <textbox id="dummy-textbox" value="ook" style="visibility: hidden;"/>
 
-    <button id="dummy-button"/>
+    </stack>
 </window>

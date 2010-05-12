@@ -244,8 +244,8 @@ function startup()
 
 function keylistener(e)
 {
-    /*dump("Key Pressed: " + String.fromCharCode(e.charCode) + "\n"
-      + "charCode: " + e.charCode + "\n");*/
+    //dump("Key Pressed: " + String.fromCharCode(e.charCode) + "\n"
+    //+ "charCode: " + e.charCode + "\n");
 
     if (e && e.keyCode == KeyEvent.DOM_VK_LEFT) moveleft();
     if (e && e.keyCode == KeyEvent.DOM_VK_RIGHT) moveright();
@@ -360,11 +360,9 @@ function newGame(inlevel, injunk)
 
 function ensureGameHasFocus()
 {
-    document.getElementById("dummy-button").focus();
-    document.getElementById("dummy-button").blur();
-    window.focus();
+    document.getElementById("dummy-textbox").focus();
 
-    dump("game should have focus\r\n");
+    //dump("game should have focus\n");
 }
 
 function isMobile()
@@ -1177,7 +1175,7 @@ function cancelDialog()
 
 function hideNetPlayDialog()
 {
-    dump("disconnecting netplay\n");
+    //dump("disconnecting netplay\n");
     netPlayer.disconnect();
 
     document.getElementById("superbox").style.opacity = "1";
