@@ -237,7 +237,29 @@ function startup()
 
 	version = document.getElementById("version").getAttribute("value");
 
+    window.addEventListener("keypress", keylistener, false);
+
     ensureGameHasFocus();
+}
+
+function keylistener(e)
+{
+    /*dump("Key Pressed: " + String.fromCharCode(e.charCode) + "\n"
+      + "charCode: " + e.charCode + "\n");*/
+
+    if (e && e.keyCode == KeyEvent.DOM_VK_LEFT) moveleft();
+    if (e && e.keyCode == KeyEvent.DOM_VK_RIGHT) moveright();
+    if (e && e.keyCode == KeyEvent.DOM_VK_UP) rotateclockwise();
+    if (e && e.keyCode == KeyEvent.DOM_VK_DOWN) droppiece();
+    if (e && e.keyCode == KeyEvent.DOM_VK_ENTER) droppieceall();
+    if (e && e.keyCode == KeyEvent.DOM_VK_RETURN) droppieceall();
+    if (e && e.keyCode == KeyEvent.DOM_VK_SPACE) droppieceall();
+    if (e && e.keyCode == KeyEvent.DOM_VK_ESCAPE) { cancelDialog(); }
+    if (e && String.fromCharCode(e.charCode) == 'p') { pause();unfocus(); }
+    if (e && String.fromCharCode(e.charCode) == 'n') { newOPGame();unfocus(); }
+    if (e && String.fromCharCode(e.charCode) == '1') { newOPGame();unfocus(); }
+    if (e && String.fromCharCode(e.charCode) == '2') { showNetPlayDialog(); }
+    if (e && String.fromCharCode(e.charCode) == 'k') { gameOverMan();unfocus(); }
 }
 
 function readPrefs()

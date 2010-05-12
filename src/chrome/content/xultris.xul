@@ -55,39 +55,6 @@
 	<script language="javascript" src="xultris.js"/>
 	<script language="javascript" src="xultris-netplay.js"/>
 
-	<keyset id="keyset">
-		<key id="moveleftkey" keycode="VK_LEFT" command="Game:moveleft"/>
-		<key id="moverightkey" keycode="VK_RIGHT" command="Game:moveright"/>
-		<key id="rotateclockwisekey" keycode="VK_UP" command="Game:rotateclockwise"/>
-		<key id="rotateanticlockwisekey" keycode="VK_DOWN" command="Game:rotateanticlockwise"/>
-		<key id="dropkey" keycode="VK_ENTER" command="Game:dropall"/>
-		<key id="dropkeyalt1" keycode="VK_RETURN" command="Game:dropall"/>
-		<key id="dropkeyalt2" key=" " command="Game:dropall"/>
-		<key id="paws" key="&key.pause;" command="UI:pause"/>
-		<key id="key_newgame" key="&key.newgame;" command="UI:1player"/>
-		<key id="key1player" key="1" command="UI:1player"/>
-		<key id="key2player" key="2" command="UI:2player"/>
-		<key id="killgame" key="&key.killgame;" command="UI:killgame"/>
-		<key id="options" key="&key.options;" command="UI:1Poptions"/>
-		<key id="cancel" keycode="VK_ESCAPE" command="UI:CancelDialog"/>
-	</keyset>
-
-	<broadcasterset id="broadcasterset">
-		<broadcaster id="Game:moveleft" value="&game.moveleft;" oncommand="moveleft();"/>
-		<broadcaster id="Game:moveright" value="&game.moveright;" oncommand="moveright();"/>
-		<broadcaster id="Game:rotateclockwise" value="&game.rotateclockwise;" oncommand="rotateclockwise();"/>
-		<broadcaster id="Game:rotateanticlockwise" value="&game.rotateanticlockwise;" oncommand="droppiece();"/>
-		<broadcaster id="Game:dropall" value="&game.drop;" oncommand="droppieceall();"/>
-		<broadcaster id="UI:pause" value="&ui.pause;" oncommand="pause();unfocus();"/>
-		<broadcaster id="UI:killgame" value="&ui.killgame;" oncommand="gameOverMan();unfocus();"/>
-		<broadcaster id="UI:1player" value="&ui.1player;" oncommand="newOPGame();unfocus();"/>
-		<broadcaster id="UI:2player" value="&ui.2player;" oncommand="showNetPlayDialog();"/>
-		<broadcaster id="UI:1Poptions" value="&ui.1Poptions;" oncommand="unfocus();showOptionsWindow();unfocus();"/>
-		<broadcaster id="UI:highscores" value="&ui.highscores;" oncommand="openHighScores();unfocus();"/>
-		<broadcaster id="UI:instructions" value="&ui.instructions;" oncommand="unfocus();showInstructionsWindow();unfocus();"/>
-		<broadcaster id="UI:CancelDialog" value="" oncommand="cancelDialog();"/>
-	</broadcasterset>
-
     <stack>
         <box orient="horizontal" id="superbox" style="background-color: black;">
             <spring flex="1"/>
