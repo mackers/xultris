@@ -253,8 +253,9 @@ function keylistener(e)
     if (e && e.keyCode == KeyEvent.DOM_VK_DOWN) droppiece();
     if (e && e.keyCode == KeyEvent.DOM_VK_ENTER) droppieceall();
     if (e && e.keyCode == KeyEvent.DOM_VK_RETURN) droppieceall();
-    if (e && e.keyCode == KeyEvent.DOM_VK_SPACE) droppieceall();
     if (e && e.keyCode == KeyEvent.DOM_VK_ESCAPE) { cancelDialog(); }
+    if (e && e.keyCode == KeyEvent.DOM_VK_SPACE) droppieceall();
+    if (e && String.fromCharCode(e.charCode) == ' ') droppieceall();
     if (e && String.fromCharCode(e.charCode) == 'p') { pause();unfocus(); }
     if (e && String.fromCharCode(e.charCode) == 'n') { newOPGame();unfocus(); }
     if (e && String.fromCharCode(e.charCode) == '1') { newOPGame();unfocus(); }
