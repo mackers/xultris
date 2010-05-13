@@ -44,15 +44,14 @@
 
 <!-- Firefox -->
 <menupopup id="menu_ToolsPopup">
-	<menuitem id="xultris-menuitem"
-		oncommand="toOpenWindowByType('xultris-main','chrome://xultris/content/');"
-		label="Xultris"
-		accesskey="x"
-		href="chrome://xultris/content/"
-		class="menuitem-iconic"/>
+    <menuitem id="xultris-menuitem"
+              oncommand="toOpenWindowByType('xultris-main','chrome://xultris/content/');"
+              label="Xultris"
+              accesskey="x"
+              href="chrome://xultris/content/"
+              class="menuitem-iconic"/>
 </menupopup>
 
-<!--
 <toolbarpalette id="BrowserToolbarPalette">
       <toolbarbutton id="extensions-xultris-button"
                      class="toolbarbutton-1 xultris-button"
@@ -60,6 +59,5 @@
                      tooltiptext="Xultris"
                      label="Xultris" />
 </toolbarpalette>
--->
 
 </overlay>
