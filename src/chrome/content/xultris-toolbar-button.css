@@ -43,4 +43,21 @@ toolbar[iconsize="small"] #extensions-xultris-button {
   list-style-image: url("chrome://xultris/content/images/icon16.png");
 }
 
+#xultris-mob-launch {
+  list-style-image: url("chrome://xultris/content/images/icon.png");
+  border-width: 8px !important;
+  -moz-border-image: url("chrome://browser/skin/images/buttondark-default-64.png") 8 repeat repeat;
+  width: 64px;
+  height: 64px;
+}
 
+#xultris-mob-launch[checked=true] {
+  list-style-image: url("chrome://xultris/content/images/icon.png");
+  border-width: 8px !important;
+  -moz-border-image: url("chrome://browser/skin/images/buttondark-active-64.png") 8 repeat repeat;
+}
+
+/* No icon for this currently, loads quick so probably not needed */
+#xultris-mob-launch[loading] {
+  list-style-image: url("chrome://xultris/content/images/icon.png");
+}

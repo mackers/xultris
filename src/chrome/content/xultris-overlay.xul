@@ -60,4 +60,18 @@
                      label="Xultris" />
 </toolbarpalette>
 
+<!-- Fennec -->
+<vbox id="panel-controls">
+  <toolbarbutton id="xultris-mob-launch" type="radio" group="1"
+                 class="panel-button button-image"
+                 insertbefore="tool-addons"
+                 linkedpanel="xultris-container"/>
+</vbox>
+
+  <deck id="panel-items">
+    <vbox flex="1" class="panel-dark" id="xultris-container">
+      <iframe type="content" flex="1" src="chrome://xultris/content/xultris-fennec.xul"/>
+    </vbox>
+  </deck>
+
 </overlay>
