@@ -43,7 +43,7 @@ toolbar[iconsize="small"] #extensions-xultris-button {
   list-style-image: url("chrome://xultris/content/images/icon16.png");
 }
 
-#xultris-mob-launch {
+#extensions-xultris-button-mobi {
   list-style-image: url("chrome://xultris/content/images/icon.png");
   border-width: 8px !important;
   -moz-border-image: url("chrome://browser/skin/images/buttondark-default-64.png") 8 repeat repeat;

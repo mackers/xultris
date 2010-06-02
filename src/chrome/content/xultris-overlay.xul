@@ -61,17 +61,25 @@
 </toolbarpalette>
 
 <!-- Fennec -->
+<!--
 <vbox id="panel-controls">
-  <toolbarbutton id="xultris-mob-launch" type="radio" group="1"
+  <toolbarbutton id="extensions-xultris-button-mobi" type="radio" group="1"
                  class="panel-button button-image"
                  insertbefore="tool-addons"
                  linkedpanel="xultris-container"/>
 </vbox>
-
-  <deck id="panel-items">
-    <vbox flex="1" class="panel-dark" id="xultris-container">
-      <iframe type="content" flex="1" src="chrome://xultris/content/xultris-fennec.xul"/>
+<deck id="panel-items">
+    <hbox id="xultris-header" class="panel-header">
+          <label value="Xultris"/>
+    </hbox>
+    <vbox flex="1" id="xultris-container">
+        <browser type="content" flex="1" src="chrome://xultris/content/xultris.xul"/>
     </vbox>
-  </deck>
+</deck>
+-->
+
+<hbox id="tabs-controls">
+    <toolbarbutton id="extensions-xultris-button-mobi" class="button-image" oncommand="BrowserUI.newTab('chrome://xultris/content/xultris.xul');"/>
+</hbox>
 
 </overlay>
