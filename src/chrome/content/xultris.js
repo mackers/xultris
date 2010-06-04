@@ -237,15 +237,14 @@ function startup()
 
 	version = document.getElementById("version").getAttribute("value");
 
-    window.addEventListener("keypress", keylistener, false);
+    document.getElementById("dummy-textbox").addEventListener("keypress", keylistener, false);
 
     ensureGameHasFocus();
 }
 
 function keylistener(e)
 {
-    //dump("Key Pressed: " + String.fromCharCode(e.charCode) + "\n"
-    //+ "charCode: " + e.charCode + "\n");
+    //dump("Key Pressed: " + String.fromCharCode(e.charCode) + "\n" + "charCode: " + e.charCode + "\n");
 
     if (e && e.keyCode == KeyEvent.DOM_VK_LEFT) moveleft();
     if (e && e.keyCode == KeyEvent.DOM_VK_RIGHT) moveright();

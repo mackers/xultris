@@ -575,7 +575,7 @@
             <label id="netplay-status" value=""/>
         </vbox>
 
-        <textbox id="dummy-textbox" value="ook" style="visibility: hidden;"/>
+        <textbox id="dummy-textbox" value="ook" style="position: absolute; top: 0; left: -1000px;"/>
 
     </stack>
 </window>
