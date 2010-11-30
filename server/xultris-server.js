@@ -34,7 +34,7 @@
 */
 
 PORT = 10228;
-HOST = "localhost";
+HOST = "xultris.bri.kz";
 SESSION_TIMEOUT = 60 * 1000;
 VERSION = "2.0";
 PROTOCOL = "2.0";
