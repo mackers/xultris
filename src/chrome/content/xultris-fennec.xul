@@ -55,6 +55,8 @@
 	<script language="javascript" src="xultris-netplay.js"/>
 
     <stack>
+        <textbox id="dummy-textbox" value="ook" style="position: absolute; top: 0; left: -1000px;"/>
+
         <box orient="horizontal" id="superbox" style="background-color: black;">
             <spring flex="1"/>
             <stack>
@@ -574,8 +576,6 @@
             </hbox>
             <label id="netplay-status" value=""/>
         </vbox>
-
-        <textbox id="dummy-textbox" value="ook" style="position: absolute; top: 0; left: -1000px;"/>
 
     </stack>
 </window>
