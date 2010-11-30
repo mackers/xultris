@@ -37,7 +37,7 @@
 function NetPlayer()
 {
     this.netHost = ""; // read from pref;
-    this.netPort = 7000;
+    this.netPort = 10228;
     this.protocol = "2.0";
 
     this.connected = false;

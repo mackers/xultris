@@ -33,26 +33,26 @@
   - ***** END LICENSE BLOCK ***** -->
 */
 
-PORT = 7000;
+PORT = 10228;
 HOST = "localhost";
 SESSION_TIMEOUT = 60 * 1000;
 VERSION = "2.0";
 PROTOCOL = "2.0";
 
-var tcp = require("./tcp");
-var sys = require("./sys");
+var sys = require('sys');
+var net = require('net');
 
 var sessions = {};
 
-var server = tcp.createServer(function (socket)
+var server = net.createServer(function(stream)
 {
-    socket.setEncoding("utf8");
+    stream.setEncoding("utf8");
 
-    socket.addListener("connect", function ()
+    stream.on("connect", function ()
     {
-        sys.puts("[xultris-server] " + (new Date()) + ": new connection from " + socket.remoteAddress);
+        sys.log("[xultris-server] " + (new Date()) + ": new connection from " + stream.remoteAddress);
 
-        //socket.setEncoding("ascii");
+        //stream.setEncoding("ascii");
 
         var session = {
             nick: "",
@@ -63,7 +63,7 @@ var server = tcp.createServer(function (socket)
 
             opponent: null,
 
-            socket: null,
+            stream: null,
          
             poke: function ()
             {
@@ -75,20 +75,20 @@ var server = tcp.createServer(function (socket)
                 if (!sessions[session.id])
                     return;
 
-                sys.puts("destroying a session");
+                sys.log("destroying a session");
 
                 try
                 {
-                    sessions[session.id].socket.close();
-                    sessions[session.id].socket = null;
+                    sessions[session.id].stream.end();
+                    sessions[session.id].stream = null;
                 } catch (e) {}
 
                 if (sessions[session.id].opponent)
                 {
                     try
                     {
-                        sessions[session.id].opponent.socket.close();
-                        sessions[session.id].opponent.socket = null
+                        sessions[session.id].opponent.stream.end();
+                        sessions[session.id].opponent.stream = null
                     } catch (e) {}
 
                     delete sessions[sessions[session.id].opponent.id];
@@ -101,17 +101,17 @@ var server = tcp.createServer(function (socket)
         session.nick = "Player " + session.id;
 
         sessions[session.id] = session;
-        //socket.send("Welcome to Xultris Server v" + VERSION + "\r\n");
+        //stream.write("Welcome to Xultris Server v" + VERSION + "\r\n");
 
-        socket.session = session;
-        session.socket = socket;
+        stream.session = session;
+        session.stream = stream;
     });
 
-    socket.addListener("receive", function (data)
+    stream.on("data", function (data)
     {
         try
         {
-            socket.session.poke();
+            stream.session.poke();
 
             var cs = data.indexOf(" ");
 
@@ -120,7 +120,7 @@ var server = tcp.createServer(function (socket)
                 var command = data.substring(0,cs);
                 var payload = data.substring(cs+1,data.length-2);
 
-                sys.puts("received '" + command + "' command with payload '" + payload + "'");
+                sys.log("received '" + command + "' command with payload '" + payload + "'");
 
                 if (command == "nick")
                 {
@@ -128,24 +128,24 @@ var server = tcp.createServer(function (socket)
 
                     if (nick != "")
                     {
-                        socket.session.nick = nick;
+                        stream.session.nick = nick;
                     }
 
-                    socket.send("nick " + socket.session.nick + "\r\n");
+                    stream.write("nick " + stream.session.nick + "\r\n");
                 }
                 else if (command == "protocol")
                 {
-                    socket.send("protocol " + PROTOCOL + "\r\n");
+                    stream.write("protocol " + PROTOCOL + "\r\n");
 
                     if (payload != PROTOCOL)
                     {
-                        socket.session.destroy();
-                        socket.close();
+                        stream.session.destroy();
+                        stream.end();
                     }
                 }
                 else if (command == "play")
                 {
-                    socket.session.opponent = null;
+                    stream.session.opponent = null;
 
                     for (var id in sessions)
                     {
@@ -154,59 +154,59 @@ var server = tcp.createServer(function (socket)
 
                         if (id == payload)
                         {
-                            socket.session.opponent = asession;
-                            socket.session.opponent.opponent = socket.session;
+                            stream.session.opponent = asession;
+                            stream.session.opponent.opponent = stream.session;
                             break;
                         }
                     }
 
-                    if (socket.session.opponent)
+                    if (stream.session.opponent)
                     {
-                        socket.send("playing " + socket.session.opponent.nick + "\r\n");
-                        socket.session.opponent.socket.send("playing " + socket.session.nick + "\r\n");
+                        stream.write("playing " + stream.session.opponent.nick + "\r\n");
+                        stream.session.opponent.stream.write("playing " + stream.session.nick + "\r\n");
                     }
                     else
                     {
-                        socket.send("error opponent '" + payload + "' not found\r\n");
+                        stream.write("error opponent '" + payload + "' not found\r\n");
                     }
                 }
                 else if (command == "send")
                 {
-                    if (socket.session.opponent && socket.session.opponent.socket)
+                    if (stream.session.opponent && stream.session.opponent.stream)
                     {
                         // TODO max size of payload here
-                        socket.session.opponent.socket.send("send " + payload + "\r\n");
-                        //socket.send("ok\r\n");
+                        stream.session.opponent.stream.write("send " + payload + "\r\n");
+                        //stream.write("ok\r\n");
                     }
                     else
                     {
-                        socket.send("error opponent not found\r\n");
+                        stream.write("error opponent not found\r\n");
                     }
                 }
                 else if (command == "sync")
                 {
-                    if (socket.session.opponent && socket.session.opponent.socket)
+                    if (stream.session.opponent && stream.session.opponent.stream)
                     {
                         // TODO max size of payload here
                         try
                         {
-                            socket.session.opponent.socket.send("sync " + payload + "\r\n");
+                            stream.session.opponent.stream.write("sync " + payload + "\r\n");
                         } catch (e)
                         {
-                            sys.puts("got exception while syncing with opponent, will kill game.");
-                            socket.session.destroy();
-                            socket.session.opponent.destroy();
+                            sys.log("got exception while syncing with opponent, will kill game.");
+                            stream.session.destroy();
+                            stream.session.opponent.destroy();
                         }
-                        //socket.send("ok\r\n");
+                        //stream.write("ok\r\n");
                     }
                     else
                     {
-                        socket.send("error opponent not found\r\n");
+                        stream.write("error opponent not found\r\n");
                     }
                 }
                 else
                 {
-                    socket.send("error opponent not found\r\n");
+                    stream.write("error opponent not found\r\n");
                 }
             }
             else
@@ -217,61 +217,61 @@ var server = tcp.createServer(function (socket)
                 if (mc.length>1)
                 command = mc[0];
 
-                sys.puts("received '" + command + "' command");
+                sys.log("received '" + command + "' command");
 
                 if (command == "ping")
                 {
-                    socket.send("pong\r\n");
+                    stream.write("pong\r\n");
                 }
                 else if (command == "pause")
                 {
-                    if (socket.session.opponent && socket.session.opponent.socket)
+                    if (stream.session.opponent && stream.session.opponent.stream)
                     {
-                        socket.session.opponent.socket.send("pause\r\n");
+                        stream.session.opponent.stream.write("pause\r\n");
                     }
                 }
                 else if (command == "unpause")
                 {
-                    if (socket.session.opponent && socket.session.opponent.socket)
+                    if (stream.session.opponent && stream.session.opponent.stream)
                     {
-                        socket.session.opponent.socket.send("unpause\r\n");
+                        stream.session.opponent.stream.write("unpause\r\n");
                     }
                 }
                 else if (command == "iwin")
                 {
-                    socket.send("goodbye\r\n");
+                    stream.write("goodbye\r\n");
 
-                    if (socket.session.opponent && socket.session.opponent.socket)
+                    if (stream.session.opponent && stream.session.opponent.stream)
                     {
-                        socket.session.opponent.socket.send("youlose\r\n");
+                        stream.session.opponent.stream.write("youlose\r\n");
                     }
 
-                    socket.session.destroy();
-                    socket.close();
+                    stream.session.destroy();
+                    stream.end();
                 }
                 else if (command == "ilose")
                 {
-                    socket.send("goodbye\r\n");
+                    stream.write("goodbye\r\n");
 
-                    if (socket.session.opponent && socket.session.opponent.socket)
+                    if (stream.session.opponent && stream.session.opponent.stream)
                     {
-                        socket.session.opponent.socket.send("youwin\r\n");
+                        stream.session.opponent.stream.write("youwin\r\n");
                     }
 
-                    socket.session.destroy();
-                    socket.close();
+                    stream.session.destroy();
+                    stream.end();
                 }
                 else if (command == "quit")
                 {
-                    socket.send("goodbye\r\n");
+                    stream.write("goodbye\r\n");
 
-                    if (socket.session.opponent && socket.session.opponent.socket)
+                    if (stream.session.opponent && stream.session.opponent.stream)
                     {
-                        socket.session.opponent.socket.send("youwin\r\n");
+                        stream.session.opponent.stream.write("youwin\r\n");
                     }
 
-                    socket.session.destroy();
-                    socket.close();
+                    stream.session.destroy();
+                    stream.end();
                 }
                 else if (command == "list")
                 {
@@ -282,35 +282,35 @@ var server = tcp.createServer(function (socket)
                         if (!sessions.hasOwnProperty(id)) continue;
                         var asession = sessions[id];
 
-                        if (id != socket.session.id && !asession.opponent)
+                        if (id != stream.session.id && !asession.opponent)
                         {
                             payload += asession.id + "=" + asession.nick + "|";
                         }
                     }
 
-                    socket.send(payload + "\r\n");
+                    stream.write(payload + "\r\n");
                 }
                 else
                 {
-                    socket.send("error unknown command '" + command + "'\r\n");
+                    stream.write("error unknown command '" + command + "'\r\n");
                 }
             }
         }
         catch (e)
         {
-            sys.puts("[xultris-server] caught exception: '" + e + "'");
+            sys.log("[xultris-server] caught exception: '" + e + "'");
         }
     });
 
-    socket.addListener("eof", function ()
+    stream.on("end", function ()
     {
-        socket.session.destroy();
-        socket.close();
+        stream.session.destroy();
+        stream.end();
     });
 });
 
 server.listen(PORT, HOST);
-sys.puts("[xultris-server] " + (new Date()) + ": new server started on " + HOST + ":" + PORT);
+sys.log("[xultris-server] " + (new Date()) + ": new server started on " + HOST + ":" + PORT);
 
 setInterval(function ()
 {
@@ -332,6 +332,6 @@ setInterval(function ()
         }
     }
 
-    sys.puts("[xultris-server] " + (new Date()) + ": have " + sessioncount + " active sessions");
+    sys.log("[xultris-server] " + (new Date()) + ": have " + sessioncount + " active sessions");
 }, 1000);
 
