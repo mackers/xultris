@@ -38,7 +38,7 @@
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
-<!DOCTYPE window SYSTEM "chrome://xultris/locale/xultris.dtd">
+<!DOCTYPE window SYSTEM "chrome://xultris/locale/xultris.ent">
 
 <window id="main-window" 
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"

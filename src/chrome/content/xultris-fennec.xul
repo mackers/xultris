@@ -40,7 +40,7 @@
 <?xml-stylesheet href="xultris.css" type="text/css" media="all"?>
 <?xml-stylesheet href="xultris-portrait.css" type="text/css" media="all and (orientation:portrait)"?>
 
-<!DOCTYPE window SYSTEM "chrome://xultris/locale/xultris.dtd">
+<!DOCTYPE window SYSTEM "chrome://xultris/locale/xultris.ent">
 
 <window id="main-window" 
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"

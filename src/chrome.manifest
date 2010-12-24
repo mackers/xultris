@@ -1,5 +1,4 @@
-content xultris chrome/content/
-skin    xultris default chrome/skin/
-locale  xultris en-US chrome/locale/en-US/
+content	xultris	chrome/content/
+locale	xultris xultrisLocale chrome/locale/
 overlay chrome://browser/content/browser.xul chrome://xultris/content/xultris-overlay.xul
 style   chrome://global/content/customizeToolbar.xul chrome://xultris/content/xultris-toolbar-button.css

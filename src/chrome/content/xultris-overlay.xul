@@ -21,7 +21,6 @@
   - Contributor(s): David McNamara
   -                 David Gillen
   -                 Mike Schuette
-  -                 Brian King
   -
   - Alternatively, the contents of this file may be used under the terms of
   - either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -41,46 +40,46 @@
 
 <overlay id="menuoverlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-    <script src="chrome://xultris/content/xultris-overlay.js"/>
-    
-    <!-- Firefox -->
-    <menupopup id="menu_ToolsPopup">
-        <menuitem id="xultris-menuitem"
-                  oncommand="toOpenWindowByType('xultris-main','chrome://xultris/content/');"
-                  label="Xultris"
-                  accesskey="x"
-                  href="chrome://xultris/content/"
-                  class="menuitem-iconic"/>
-    </menupopup>
-    
-    <toolbarpalette id="BrowserToolbarPalette">
-          <toolbarbutton id="extensions-xultris-button"
-                         class="toolbarbutton-1 xultris-button"
-                         oncommand="toOpenWindowByType('xultris-main','chrome://xultris/content/');"
-                         tooltiptext="Xultris"
-                         label="Xultris" />
-    </toolbarpalette>
-    
-    <!-- Fennec -->
-    <!--
-    <vbox id="panel-controls">
-      <toolbarbutton id="extensions-xultris-button-mobi" type="radio" group="1"
-                     class="panel-button button-image"
-                     insertbefore="tool-addons"
-                     linkedpanel="xultris-container"/>
-    </vbox>
-    <deck id="panel-items">
-        <hbox id="xultris-header" class="panel-header">
-              <label value="Xultris"/>
-        </hbox>
-        <vbox flex="1" id="xultris-container">
-            <browser type="content" flex="1" src="chrome://xultris/content/xultris.xul"/>
-        </vbox>
-    </deck>
-    -->
-    
-    <hbox id="tabs-controls">
-        <toolbarbutton id="extensions-xultris-button-mobi" class="button-image" oncommand="BrowserUI.newTab('chrome://xultris/content/xultris.xul');"/>
+<script src="chrome://xultris/content/xultris-overlay.js"/>
+
+<!-- Firefox -->
+<menupopup id="menu_ToolsPopup">
+    <menuitem id="xultris-menuitem"
+              oncommand="toOpenWindowByType('xultris-main','chrome://xultris/content/');"
+              label="Xultris"
+              accesskey="x"
+              href="chrome://xultris/content/"
+              class="menuitem-iconic"/>
+</menupopup>
+
+<toolbarpalette id="BrowserToolbarPalette">
+      <toolbarbutton id="extensions-xultris-button"
+                     class="toolbarbutton-1 xultris-button"
+                     oncommand="toOpenWindowByType('xultris-main','chrome://xultris/content/');"
+                     tooltiptext="Xultris"
+                     label="Xultris" />
+</toolbarpalette>
+
+<!-- Fennec -->
+<!--
+<vbox id="panel-controls">
+  <toolbarbutton id="extensions-xultris-button-mobi" type="radio" group="1"
+                 class="panel-button button-image"
+                 insertbefore="tool-addons"
+                 linkedpanel="xultris-container"/>
+</vbox>
+<deck id="panel-items">
+    <hbox id="xultris-header" class="panel-header">
+          <label value="Xultris"/>
     </hbox>
+    <vbox flex="1" id="xultris-container">
+        <browser type="content" flex="1" src="chrome://xultris/content/xultris.xul"/>
+    </vbox>
+</deck>
+-->
+
+<hbox id="tabs-controls">
+    <toolbarbutton id="extensions-xultris-button-mobi" class="button-image" oncommand="BrowserUI.newTab('chrome://xultris/content/xultris.xul');"/>
+</hbox>
 
 </overlay>
