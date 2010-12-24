@@ -1,6 +1,4 @@
-<?xml version="1.0"?> 
-
-<!-- ***** BEGIN LICENSE BLOCK *****
+/* ***** BEGIN LICENSE BLOCK *****
   -   Version: MPL 1.1/GPL 2.0/LGPL 2.1
   -
   - The contents of this file are subject to the Mozilla Public License Version
@@ -21,6 +19,7 @@
   - Contributor(s): David McNamara
   -                 David Gillen
   -                 Mike Schuette
+  -                 Brian King
   -
   - Alternatively, the contents of this file may be used under the terms of
   - either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -34,39 +33,4 @@
   - the provisions above, a recipient may use your version of this file under
   - the terms of any one of the MPL, the GPL or the LGPL.
   - 
-  - ***** END LICENSE BLOCK ***** -->
-
-<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-
-<!DOCTYPE window SYSTEM "chrome://xultris/locale/xultris.dtd">
-
-<window id="main-window" 
-	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-	xmlns:html="http://www.w3.org/TR/REC-html40"
-	title="&ui.instructions;"
-	orient="vertical"
-	align="center"
-	onload="document.getElementById('cancelButton').focus();">
-
-	<!-- <script language="javascript" src="xultris.js"/> -->
-
-	<vbox>
-		<groupbox orient="vertical"> 
-			<title><text value="&ui.instructions;"/></title>
-			<label width="200px">&desc.instructions;</label>
-		</groupbox>
-
-		<spring height="10px"/>
-
-		<groupbox orient="vertical"> 
-			<title><text value="&ui.scoring;"/></title>
-			<label width="200px">&desc.scoring;</label>
-		</groupbox>
-
-	</vbox>
-
-	<vbox>
-		<spring height="10px"/>
-		<button id="cancelButton" oncommand="close();" label="&ui.close;" value="&ui.close;"/>
-	</vbox>
-</window>
+  - ***** END LICENSE BLOCK ****** */

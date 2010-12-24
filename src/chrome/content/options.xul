@@ -21,6 +21,7 @@
   - Contributor(s): David McNamara
   -                 David Gillen
   -                 Mike Schuette
+  -                 Brian King
   -
   - Alternatively, the contents of this file may be used under the terms of
   - either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -38,16 +39,13 @@
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
-<!DOCTYPE window SYSTEM "chrome://xultris/locale/xultris.ent">
+<!DOCTYPE window SYSTEM "chrome://xultris/locale/xultris.dtd">
 
 <prefwindow id="xultris-preferences" 
-	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-	title="&ui.1Poptions;"
-	orient="vertical"
-	align="center"
-	>
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    title="&ui.1Poptions;">
 
-	<!--<script language="javascript" src="xultris.js"/>-->
+    <!--<script language="javascript" src="xultris.js"/>-->
 
     <prefpane id="pane1" label="&ui.1Poptions;">
         <preferences>
@@ -138,7 +136,7 @@
                     </menulist>
                 </hbox>
                 <spring width="15px"/>
-                <hbox>
+                <hbox align="center">
                     <text value="&options.junk;"/>
 
                     <menulist id="junk" preference="junk">

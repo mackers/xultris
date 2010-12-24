@@ -1,2 +1,3 @@
 xpi:
-	cd src && find . | grep -v CVS | xargs zip ../xultris.xpi
+	rm -f xultris.xpi
+	cd src && find . | grep -v CVS |  grep -v .DS_Store | xargs zip ../xultris.xpi
