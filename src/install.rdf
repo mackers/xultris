@@ -4,32 +4,33 @@
      xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
   <Description about="urn:mozilla:install-manifest">
-	<em:id>{bed1bcec-57d3-47e1-a32b-b4e5f3003019}</em:id>
-	<em:version>3.0.1</em:version>
-	<em:type>2</em:type>
+    <em:id>{bed1bcec-57d3-47e1-a32b-b4e5f3003019}</em:id>
+    <em:version>3.0.1</em:version>
+    <em:type>2</em:type>
 
-	<em:name>Xultris</em:name>
-	<em:description>Xultris is a variant of the computer game classic Tetris.</em:description>
-	<em:creator>mackers</em:creator>
-	<em:homepageURL>http://games.mozdev.org/xultris/</em:homepageURL>
+    <em:name>Xultris</em:name>
+    <em:description>Xultris is a variant of the computer game classic Tetris.</em:description>
+    <em:creator>mackers</em:creator>
+    <em:contributor>Brian King</em:contributor>
+    <em:homepageURL>http://games.mozdev.org/xultris/</em:homepageURL>
     <em:iconURL>chrome://xultris/content/images/icon.png</em:iconURL>
     <em:optionsURL>chrome://xultris/content/options.xul</em:optionsURL>
 
-	<em:targetApplication>
-		<Description>
-			<em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
-			<em:minVersion>3.6</em:minVersion>
-			<em:maxVersion>4.0b7</em:maxVersion>
-		</Description>
-	</em:targetApplication>
+    <em:targetApplication>
+        <Description>
+            <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
+            <em:minVersion>3.6</em:minVersion>
+            <em:maxVersion>4.0b9pre</em:maxVersion>
+        </Description>
+    </em:targetApplication>
 
     <em:targetApplication>
         <Description>
             <em:id>{a23983c0-fd0e-11dc-95ff-0800200c9a66}</em:id>
             <em:minVersion>1.0</em:minVersion>
-            <em:maxVersion>4.0b2</em:maxVersion>
+            <em:maxVersion>4.0b4pre</em:maxVersion>
         </Description>
     </em:targetApplication>
 
-  </Description>      
+  </Description>
 </RDF>
