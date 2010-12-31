@@ -7,6 +7,7 @@
     <em:id>{bed1bcec-57d3-47e1-a32b-b4e5f3003019}</em:id>
     <em:version>3.0.1</em:version>
     <em:type>2</em:type>
+    <em:unpack>true</em:unpack>
 
     <em:name>Xultris</em:name>
     <em:description>Xultris is a variant of the computer game classic Tetris.</em:description>
@@ -28,7 +29,7 @@
         <Description>
             <em:id>{a23983c0-fd0e-11dc-95ff-0800200c9a66}</em:id>
             <em:minVersion>1.0</em:minVersion>
-            <em:maxVersion>4.0b4pre</em:maxVersion>
+            <em:maxVersion>4.0.*</em:maxVersion>
         </Description>
     </em:targetApplication>
 
