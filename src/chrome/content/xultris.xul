@@ -55,10 +55,10 @@
 	<script language="javascript" src="xultris.js"/>
 	<script language="javascript" src="xultris-netplay.js"/>
 
-    <stack>
-        <textbox id="dummy-textbox" value="ook" style="position: absolute; top: 0; left: -1000px;"/>
 
-        <box orient="horizontal" id="superbox" style="background-color: black;">
+    <stack>
+
+        <box orient="horizontal" id="superbox">
             <spring flex="1"/>
             <stack>
                 <box orient="horizontal">
@@ -271,7 +271,7 @@
                 <vbox id="infotextbox"><hbox><text id="infotext" value="&ui.hitntobegin;"/></hbox></vbox>
             </stack>
             <vbox id="righttext">
-                <image src="chrome://xultris/content/images/xultris.gif"/>
+                <image src="chrome://xultris/content/images/xultris.png"/>
                 <hbox class="title" pack="center">
                     <text id="version" value="v&package.version;"/>
                 </hbox>
@@ -558,7 +558,7 @@
             </stack>
         </box>
      
-        <vbox id="netplay" collapsed="true" style="background-color: black; border: 2px solid yellow; color: yellow; margin: 40px 100px; padding: 10px;">
+        <vbox id="netplay" collapsed="true" class="stackdialog">
             <hbox flex="1" align="center">
                 <label value="&netplay.yourplayername.label;"/>
                 <textbox id="netplay-player-name" oninput="invalidateNetPlayConnectButton();" oncommand="netPlayConnect();" maxlength="12"
@@ -577,5 +577,15 @@
             <label id="netplay-status" value=""/>
         </vbox>
 
+        <vbox id="netplayinstructions" collapsed="true" class="stackdialog">
+            <description style="margin: 1em;">&netplay.instructions.description;</description>
+            <label style="margin: 1em;" value="&netplay.instructions.link.description;" href="https://github.com/mackers/xultris/blob/master/server/xultris-server.js" class="text-link"/>
+            <spacer flex="1"/>
+            <hbox pack="center"><button onclick="hideNetplayInstructions();" label="&ui.close;"/></hbox>
+        </vbox>
+
     </stack>
+
+    <textbox id="dummy-textbox" value="ook" style="margin-top: 100px; font-size: 1px; z-index: -99; color: transparent; background-color: transparent;"/>
+
 </window>

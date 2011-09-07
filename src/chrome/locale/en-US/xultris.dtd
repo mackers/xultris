@@ -1,6 +1,6 @@
 <!ENTITY package.name "Xultris">
 <!ENTITY package.description "A tetris clone for mozilla">
-<!ENTITY package.version "3.0">
+<!ENTITY package.version "4.0">
 
 <!ENTITY ui.score "Score">
 <!ENTITY ui.level "Level">
@@ -71,4 +71,7 @@ the piece, or drops it one line.">
 <!ENTITY netplay.cancel.label "Cancel">
 <!ENTITY netplay.connecting.label "Connecting...">
 <!ENTITY netplay.errorconnecting.label "Error Connecting">
+
+<!ENTITY netplay.instructions.description "To play a 2 player game, you must run a Xultris Server somewhere.">
+<!ENTITY netplay.instructions.link.description "Click here for more information on Xultris Server">
 

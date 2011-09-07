@@ -67,6 +67,7 @@ var curpiece;
 var nextpiece;
 var widthofgrid;
 var heightofgrid;
+var dummy;
 var gameison=false;
 var pauseison=false;
 var intervalID;
@@ -224,6 +225,8 @@ function startup()
 	widthofgrid=document.getElementById("columns").childNodes.length;
 	heightofgrid=document.getElementById("rows").childNodes.length;
 
+    dummy=document.getElementById("dummy-textbox");
+
 	grid = new Array(widthofgrid);
 
 	for (var i=0 ; i<widthofgrid ; i++)
@@ -237,7 +240,7 @@ function startup()
 
 	version = document.getElementById("version").getAttribute("value");
 
-    document.getElementById("dummy-textbox").addEventListener("keypress", keylistener, false);
+    dummy.addEventListener("keypress", keylistener, false);
 
     ensureGameHasFocus();
 }
@@ -260,6 +263,8 @@ function keylistener(e)
     if (e && String.fromCharCode(e.charCode) == '1') { newOPGame();unfocus(); }
     if (e && String.fromCharCode(e.charCode) == '2') { showNetPlayDialog(); }
     if (e && String.fromCharCode(e.charCode) == 'k') { gameOverMan();unfocus(); }
+
+    dummy.value = "";
 }
 
 function readPrefs()
@@ -360,7 +365,7 @@ function newGame(inlevel, injunk)
 
 function ensureGameHasFocus()
 {
-    document.getElementById("dummy-textbox").focus();
+    dummy.focus();
 
     //dump("game should have focus\n");
 }
@@ -1003,6 +1008,13 @@ function showInstructionsWindow()
 
 }
 
+function hideNetplayInstructions()
+{
+    document.getElementById("superbox").style.opacity = "1";
+    document.getElementById("netplayinstructions").collapsed = true;
+    ensureGameHasFocus();
+}
+
 function showNetPlayDialog()
 {
 	if (gameison && is2player)
@@ -1017,6 +1029,13 @@ function showNetPlayDialog()
     }
 
     readPrefs();
+
+    if (!netPlayer.netHost)
+    {
+        document.getElementById("superbox").style.opacity = "0.75";
+        document.getElementById("netplayinstructions").collapsed = false;
+        return;
+    }
 
     document.getElementById("netplay-player-name").value = playerName;
 
@@ -1180,6 +1199,7 @@ function hideNetPlayDialog()
 
     document.getElementById("superbox").style.opacity = "1";
     document.getElementById("netplay").collapsed = true;
+    ensureGameHasFocus();
 }
 
 function netPlayStart()

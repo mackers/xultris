@@ -33,8 +33,35 @@
   - ***** END LICENSE BLOCK ***** -->
 */
 
+/**
+
+This is the Xultris server. It provides multiplayer support to the Xultris
+game. Xultris is a variant of the computer game classic Tetris, implemented as
+a Firefox addon.
+
+https://addons.mozilla.org/en-US/firefox/addon/xultris/
+https://github.com/mackers/xultris/
+
+
+To enable muliplayer support:
+
+- Change the HOST variable below to match the hostname or IP address of your
+  server on your network or the internet.
+
+- Run the script using node.js (http://nodejs.org/). Tested with version
+  0.4.11.
+
+    node xultris-server.js
+
+- Configure Xultris clients to connect to this server by setting the nethost
+  preference to the HOST variable (in Firefox, open "about:config"):
+
+    extensions.xultris.nethost
+
+*/
+
 PORT = 10228;
-HOST = "xultris.bri.kz";
+HOST = "localhost";
 SESSION_TIMEOUT = 60 * 1000;
 VERSION = "2.0";
 PROTOCOL = "2.0";

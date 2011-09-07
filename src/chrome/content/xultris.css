@@ -35,8 +35,8 @@
   - ***** END LICENSE BLOCK ***** */
 
 window {
-	background-color: black;
-	color: yellow;
+	background-image: url("images/bg.png");
+	color: #7788aa;
 	font-family: verdana;
 }
 
@@ -46,15 +46,15 @@ window.mobile {
 grid {
 	border-style: solid;
 	border-width: 2px;
-	border-color: yellow;
+	border-color: #7788aa;
 	max-height: 360px;
 }
 
 #rows row spring.greyborder,
 #rows2 row spring.greyborder {
 	border-style: solid;
-	border-width: 0px 0px 1px 1px;
-	border-color: gray;
+	border-width: 2px;
+	border-color: transparent;
 }
 
 #rows row spring.greyborder,
@@ -89,14 +89,15 @@ grid {
 .on {
 	/*background-color: red;*/
 	border-style: outset;
-	border-width: 1px;
-	border-color: grey;
+	border-width: 2px;
+	border-color: black;
+    border-style: ridge;
 }
 
 .off {
 	border-style: solid;
-	border-width: 0px 0px 1px 1px;
-	border-color: gray;
+	border-width: 2px;
+	border-color: transparent;
 	background-color: transparent;
 }
 
@@ -106,20 +107,20 @@ grid {
 
 #maingrid,
 #player2{
-	background-position: bottom center;
-	background-repeat: no-repeat;
-	background-color: black;
+	
+	background: url("images/bg2.png");
 }
 
 .bgimage {
-	background-image: url("images/xultris.gif");
+	/*background-image: url("images/xultris.gif");*/
 }
 
 .nobgimage {
  }
 
 #pgrid {
-	background-color: black;
+	background-color: #ddeeff;
+    border: 2px solid #7788aa;
 }
 
 #infotextbox,
@@ -148,7 +149,7 @@ grid {
 	padding-left: 15px;
 	padding-right: 15px;
 	text-align: center;
-    color: yellow;
+    color: #7788aa;
 }
 
 .title {
@@ -215,3 +216,14 @@ grid {
     width: 6em;
 }
 
+.text-link
+{
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.stackdialog
+{
+    background-color: #ddeeff; border: 2px solid #7788aa; color: #7788aa; margin: 40px 100px; padding: 10px;
+}
