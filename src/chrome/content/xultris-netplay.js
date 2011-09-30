@@ -199,7 +199,7 @@ function NetPlayer()
             pump.init(stream, -1, -1, 0, 0, false);
             pump.asyncRead(this.dataListener,netPlayer);
 
-            setTimeout(netPlayer.sendProtocol, 200);
+            setTimeout(function() { netPlayer.sendProtocol(); }, 200);
             netPlayer.connected = true;
         }
         catch (e)

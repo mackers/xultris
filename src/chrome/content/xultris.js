@@ -502,7 +502,7 @@ function unhalt()
 		spe = 500-(level+speed)*40;
 	}
 	if (spe<50) spe=50;
-	if (!intervalID) intervalID = window.setInterval("tick()",spe);
+	if (!intervalID) intervalID = window.setInterval(function() { tick(); },spe);
 }
 
 function tick() {
@@ -906,7 +906,7 @@ function clearInfoText()
 function niceInfoText(intext)
 {
 	setInfoText(intext);
-	setTimeout("clearInfoText()",1000);
+	setTimeout(function() { clearInfoText(); },1000);
 }
 
 function drawPreview(p,style)
@@ -1125,7 +1125,7 @@ function netPlayConnect()
         var sel = (lb.selectedItem?lb.selectedItem.value:-1);
 
         clearNetPlayDialog();
-        listTimer = setTimeout(netPlayer.listAvailablePlayers, 2000);
+        listTimer = setTimeout(function() { netPlayer.listAvailablePlayers(); }, 2000);
 
         if (players == null)
         {

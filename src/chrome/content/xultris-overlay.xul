@@ -41,12 +41,19 @@
 
 <overlay id="menuoverlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
+    <!--
     <script src="chrome://xultris/content/xultris-overlay.js"/>
+    -->
     
     <!-- Firefox -->
+
+    <commandset>
+        <command id="cmd_xultris" oncommand="window.open('chrome://xultris/content/', 'xultris-main', 'width=700,height=420,nomenubar,resizable,noscrollbars,nostatus,notoolbar');"/>
+    </commandset>
+
     <menupopup id="menu_ToolsPopup">
         <menuitem id="xultris-menuitem"
-                  oncommand="toOpenWindowByType('xultris-main','chrome://xultris/content/');"
+                  command="cmd_xultris"
                   label="Xultris"
                   accesskey="x"
                   href="chrome://xultris/content/"
@@ -56,7 +63,7 @@
     <toolbarpalette id="BrowserToolbarPalette">
           <toolbarbutton id="extensions-xultris-button"
                          class="toolbarbutton-1 xultris-button"
-                         oncommand="toOpenWindowByType('xultris-main','chrome://xultris/content/');"
+                         command="cmd_xultris"
                          tooltiptext="Xultris"
                          label="Xultris" />
     </toolbarpalette>
