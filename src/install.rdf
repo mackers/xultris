@@ -12,7 +12,7 @@
     <em:description>Xultris is a variant of the computer game classic Tetris.</em:description>
     <em:creator>mackers</em:creator>
     <em:contributor>Brian King</em:contributor>
-    <em:homepageURL>http://games.mozdev.org/xultris/</em:homepageURL>
+    <em:homepageURL>https://github.com/mackers/xultris</em:homepageURL>
     <em:iconURL>chrome://xultris/content/images/icon.png</em:iconURL>
     <em:optionsURL>chrome://xultris/content/options.xul</em:optionsURL>
 
